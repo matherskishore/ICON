@@ -1,0 +1,360 @@
+<aside class="main-sidebar">
+  {{user.SystemRole}}
+  <!-- sidebar: style can be found in sidebar.less -->
+  <section class="sidebar">
+    <!-- Sidebar user panel -->
+    <div class="user-panel">
+      <div class="pull-left image">
+        <!-- <img *ngIf="user.RoleCode=='MGR'" src="assets/images/employee/Adithya.jpg" class="img-circle" alt="User Image"> -->
+        <img src="assets/dist/img/avatar5.png" class="img-circle" alt="User Image">
+      </div>
+      <div class="pull-left info">
+        <p>{{user.Name}} {{user.SurName}}</p>
+        <!--<a href="#"><i class="fa fa-circle text-success"></i> Online</a>-->
+        {{user.Designation}}
+      </div>
+    </div>
+    <ul *ngIf="isConsultant(user.RoleId)" class="sidebar-menu">
+      <!--<li class="header">Users</li>-->
+      <li class="treeview">
+        <a routerLink='/home/irf-consultant-home'>
+          <i class="fa fa-globe"></i>
+          <span>IRF</span>
+          <span class="pull-right-container">
+            <!-- <i class="fa fa-angle-left pull-right"></i> -->
+          </span>
+        </a>
+      </li>
+      <li>
+        <a routerLink='/home/invoice-view'>
+          <i class="fa fa-book"></i>
+          <span>Invoices</span>
+          <span class="pull-right-container">
+            <!-- <i class="fa fa-angle-left pull-right"></i> -->
+          </span>
+        </a>
+      </li>
+      <li>
+        <a routerLink='/home/credit-note-summary'>
+          <i class="fa fa-newspaper-o"></i>
+          <span>Credit Notes</span>
+          <span class="pull-right-container">
+            <!-- <i class="fa fa-angle-left pull-right"></i> -->
+          </span>
+        </a>
+      </li>
+      <li>
+        <a routerLink='/home/suspense-account-review'>
+          <i class="fa fa-money"></i>
+          <span>Suspense Account</span>
+          <span class="pull-right-container">
+            <!-- <i class="fa fa-angle-left pull-right"></i> -->
+          </span>
+        </a>
+      </li>
+      <li>
+        <a routerLink='/home/revenue-sharing'>
+          <i class="fa fa-share-alt"></i>
+          <span>Revenue Sharing</span>
+          <span class="pull-right-container">
+            <!-- <i class="fa fa-angle-left pull-right"></i> -->
+          </span>
+        </a>
+      </li>
+      <li class="treeview">
+        <a href="#">
+          <i class="fa fa-money"></i>
+          <span>Claim Sheets</span>
+          <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
+        </a>
+        <ul *ngIf="!(isBPM(user.RoleCode))" class="treeview-menu">
+          <li class="active">
+            <a routerLink='/home/payout-request-c'>
+              <i class="fa fa-circle-o"></i>Payout Request</a>
+          </li>
+          <li class="active">
+            <a routerLink='/home/claim-sheet'>
+              <i class="fa fa-circle-o"></i>Claim Sheet Report</a>
+          </li>
+        </ul>
+        <ul *ngIf="isBPM(user.RoleCode)" class="treeview-menu">
+          <li class="active">
+            <a routerLink='/home/payout-request-a'>
+              <i class="fa fa-circle-o"></i>Payout Request</a>
+          </li>
+          <li class="active">
+            <a routerLink='/home/claim-sheet'>
+              <i class="fa fa-circle-o"></i>Claim Sheet Report</a>
+          </li>
+        </ul>
+      </li>
+      <li class="active" *ngIf="!user.IsManager">
+        <a routerLink='/home/credit-note-report'>
+          <i class="fa fa-circle-o"></i>CreditNote Report</a>
+      </li>
+      <li>
+        <a routerLink='/home/client-search'>
+          <i class="fa fa-search"></i>
+          <span>Search Client</span>
+        </a>
+      </li>
+    </ul>
+    <ul *ngIf="isAccountsTeam(user.RoleCode)" class="sidebar-menu">
+      <!--<li class="header">Users</li>-->
+      <li class="treeview">
+        <a routerLink='/home/mgmt-home'>
+          <i class="fa fa-dashboard"></i>
+          <span>Dashboard</span>
+          <span class="pull-right-container">
+            <!-- <i class="fa fa-angle-left pull-right"></i> -->
+          </span>
+        </a>
+      </li>
+      <li class="treeview">
+        <a href = "#">
+          <i class="fa fa-money"></i>
+          <span>Requests</span>
+          <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
+        </a>
+        <ul class = "treeview-menu">
+          <li class = "active">
+            <a routerLink='/home/irf-reviewer-home'>
+              <i class = "fa fa-circle-o"></i>
+              <span>Invoice Requests</span>
+            </a>
+          </li>
+          <li class = "active">
+            <a routerLink='/home/credit-note-review'>
+              <i class="fa fa-circle-o"></i>
+              <span>Credit Note Approval</span>
+            </a>
+          </li>
+          <li class="active">
+            <a routerLink='/home/payout-request-r'>
+              <i class="fa fa-circle-o"></i>
+              <span>Payout Requests</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class = "treeview">
+        <a href = "#">
+          <i class = "fa fa-book"></i>
+          <span>Reports</span>
+          <span class = "pull-right-container">
+            <i class = "fa fa-angle-left pull-right"></i>
+          </span>
+        </a>
+        <ul class = "treeview-menu">
+          <li class = "active">
+            <a routerLink='/home/invoice-view'>
+              <i class="fa fa-circle-o"></i>
+              <span>Invoice Report</span>
+            </a>
+          </li>
+          <li class="active">
+            <a routerLink='/home/credit-note-report'>
+              <i class="fa fa-circle-o"></i>
+              <span>Credit Note Report</span>
+            </a>
+          </li>
+          <li class="active">
+            <a routerLink='/home/claim-sheet'>
+              <i class="fa fa-circle-o"></i>
+              <span>Claim Sheet Report</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="treeview">
+        <a href="#">
+          <i class="fa fa-retweet"></i>
+          <span>Integration</span>
+          <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
+        </a>
+        <ul class="treeview-menu">
+          <li class = "active">
+            <a routerLink='/home/import-invoice'>
+              <i class="fa fa-circle-o"></i>
+              <span>Import Processed Invoice</span>
+            </a>
+          </li>
+          <li class = "active">
+            <a routerLink='/home/import-processed-credit-note'>
+              <i class="fa fa-circle-o"></i>
+              <span>Import Processed Credit Note</span>
+            </a>
+          </li>
+          <li class = "active">
+            <a routerLink='/home/irf-invoice-status'>
+              <i class="fa fa-circle-o"></i>
+              <span>IRF Integration Status</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="treeview">
+        <a href = "#">
+          <i class = "fa fa-building"></i>
+          <span>Attach Documents</span>
+          <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
+        </a>
+        <ul class = "treeview-menu">
+          <li class = "active">
+            <a routerLink='/home/upload-invoice'>
+              <i class="fa fa-circle-o"></i>
+              <span>Attach Invoice Document</span>
+            </a>
+          </li>
+          <li class = "active">
+            <a routerLink='/home/upload-credit-note'>
+              <i class="fa fa-circle-o"></i>
+              <span>Attach Credit Note Document</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <a routerLink='/home/import-data'>
+          <i class="fa fa-upload"></i>
+          <span>Import Processed Data</span>
+          <span class="pull-right-container">
+          </span>
+        </a>
+      </li>
+      <li>
+        <a routerLink='/home/dispatch-history'>
+          <i class="fa fa-envelope"></i>
+          <span>Invoice Dispatch Details</span>
+          <span class="pull-right-container">
+          </span>
+        </a>
+      </li>
+      <li>
+        <a routerLink='/home/suspense-account-summary'>
+          <i class="fa fa-money"></i>
+          <span>Suspense Account</span>
+          <span class="pull-right-container">
+          </span>
+        </a>
+      </li>
+      <li>
+        <a routerLink='/home/clients'>
+          <i class="fa fa-users"></i>
+          <span>Clients</span>
+        </a>
+      </li>
+    </ul>
+    <ul *ngIf="user.SystemRole !=null && user.SystemRole>0" class="sidebar-menu">
+      <li class="treeview">
+        <a href="#">
+          <i class="fa fa-gear"></i>
+          <span>Settings</span>
+          <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
+        </a>
+        <ul class="treeview-menu">
+          <li>
+            <a routerLink='/home/clients'>
+              <i class="fa fa-circle-o"></i>Clients</a>
+          </li>
+          <li>
+            <a routerLink='/home/client-search'>
+              <i class="fa fa-search"></i>
+              <span>Search Client</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <ul *ngIf="user.IsManager && !isAccountsTeam(user.RoleCode) && !isAccountsHead(user.RoleCode)" class="sidebar-menu">
+      <!--<li class="header">Users</li>-->
+      <li class="treeview">
+        <a href="#">
+          <i class="fa fa-users"></i>
+          <span>Team</span>
+          <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
+        </a>
+        <ul class="treeview-menu">
+          <li class="active">
+            <a routerLink='/home/invoice-report'>
+              <i class="fa fa-circle-o"></i>Invoice</a>
+          </li>
+          <li class="active">
+            <a routerLink='/home/credit-note-report'>
+              <i class="fa fa-circle-o"></i>CreditNote Report</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <ul *ngIf="isAccountsHead(user.RoleCode)" class="sidebar-menu">
+      <li class="treeview">
+        <a routerLink='/home/mgmt-home'>
+          <i class="fa fa-dashboard"></i>
+          <span>Dashboard</span>
+          <span class="pull-right-container">
+            <!-- <i class="fa fa-angle-left pull-right"></i> -->
+          </span>
+        </a>
+      </li>
+      <li>
+        <a routerLink='/home/invoice-view'>
+          <i class="fa fa-book"></i>
+          <span>Invoices</span>
+          <span class="pull-right-container">
+            <!-- <i class="fa fa-angle-left pull-right"></i> -->
+          </span>
+        </a>
+      </li>
+      <li>
+        <a routerLink='/home/claim-sheet'>
+          <i class="fa fa-money"></i>
+          <span>Claim Sheet</span>
+          <span class="pull-right-container">
+            <!-- <i class="fa fa-angle-left pull-right"></i> -->
+          </span>
+        </a>
+      </li>
+      <li>
+        <a routerLink='/home/client-search'>
+          <i class="fa fa-search"></i>
+          <span>Search Client</span>
+        </a>
+      </li>
+      <li class="active">
+        <a routerLink='/home/credit-note-report'>
+          <i class="fa fa-circle-o"></i>CreditNote Report</a>
+      </li>
+    </ul>
+    <ul class="sidebar-menu">
+      <!--<li class="header">Users</li>-->
+      <li class="treeview">
+        <a href="#">
+          <i class="fa fa-user"></i>
+          <span>Profile</span>
+          <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
+        </a>
+        <ul class="treeview-menu">
+          <li class="active">
+            <a routerLink='' (click)="onLogout();">
+              <i class="fa fa-circle-o"></i>Logout</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </section>
+  <!-- /.sidebar -->
+</aside>

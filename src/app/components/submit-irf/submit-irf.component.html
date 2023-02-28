@@ -1,0 +1,823 @@
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>
+      Invoice Requisition
+      <span *ngIf="iRFId!=null"> - #{{iRFId}}</span>
+    </h1>
+    <ol class="breadcrumb">
+      <li>
+        <a routerLink='{{previousPage}}'>
+          <i class="fa fa-dashboard"></i>Home</a>
+      </li>
+      <li class="active">IRF Submission</li>
+    </ol>
+
+  </section>
+  <section class="content">
+    <div class="row">
+      <div class="col-md-12">
+        <div *ngIf="msg" role="alert" class="alert alert-info alert-dismissible">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+          <span class="sr-only">Error:</span> {{msg}}
+        </div>
+        <br />
+        <div class="alert alert-info" role="alert" *ngIf="indLoading">
+          <img src="assets/images/loading.gif" width="32" height="32" /> Loading...</div>
+      </div>
+    </div>
+
+    <div>
+      <form novalidate #myForm="ngForm">
+        <tabset>
+          <tab class="header">
+            <span class="header" *tabHeading>
+              <i class="fa fa-file"></i> &nbsp;General</span>
+            <div class="box box-primary">
+              <div class="box-body">
+                <div class="box">
+                  <div class="box-body">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="control-label">IRF Type</label>
+                          <select *ngIf="isnewIRF" id="type" class="form-control" name='IRF_Type' [disabled]="isReadOnly" required [(ngModel)]="iRFDetail.IRF_Type"
+                            (change)="onchangeIRFType($event);">
+                            <option *ngFor="let IRFType of IRFType_GenericCode" value={{IRFType.Name}}>
+                              {{IRFType.Name}}
+                            </option>
+                          </select>
+                          <label *ngIf="!isnewIRF" class="form-control" name='IRFSubType'>{{iRFDetail.IRF_Type}}
+                          </label>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group ">
+                          <label class="control-label ">IRF Sub-Type</label>
+                          <select *ngIf="isnewIRF" id="subType" class="form-control" name='IRFSubType' [disabled]='isReadOnly' required [(ngModel)]="iRFDetail.IRFSubType">
+                            <option *ngFor="let type of IRFType_SubCategory" value={{type.Name}}>
+                              {{type.Name}}
+                            </option>
+                          </select>
+                          <label *ngIf="!isnewIRF" class="form-control" name='IRFSubType'>{{iRFDetail.IRFSubType}}
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="box">
+                  <div class="box-body">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group ">
+                          <label class="control-label ">Consultant Name</label>
+                          <label *ngIf="isnewIRF" class="form-control" name='IRF_Type'>{{user.Name}} {{user.SurName}}
+                          </label>
+                          <label *ngIf="!isnewIRF" class="form-control" name='IRF_Type'>{{iRFDetail.ConsultantName}}
+                          </label>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group ">
+                          <label class="control-label ">Reporting Manager</label>
+                          <label *ngIf="isnewIRF" class="form-control" name='IRF_Type'>{{user.ManagerName}}
+                          </label>
+                          <label *ngIf="!isnewIRF" class="form-control" name='IRF_Type'>{{iRFDetail.ManagerName}}
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="box">
+                  <div class="box-body">
+                    <div class="row">
+                      <div class="col-md-3">
+                        <div class="form-group ">
+                          <label class="control-label ">Invoice Type</label>
+                          <select class="form-control" name='InvoiceType' required [(ngModel)]="iRFDetail.InvoiceType"
+                            [disabled]="isReadOnly">
+                            <option *ngFor="let type of masterData.InvoiceType " value={{type}}>
+                              {{type}}
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-1">
+                        <div class="form-group ">
+                          <label class="control-label ">Currency</label>
+                          <select class="form-control" name='CurrencyDetails' required [(ngModel)]="iRFDetail.CurrencyDetails"
+                            [disabled]="isReadOnly">
+                            <option *ngFor="let type of masterData.CurrencyDetails " value={{type}}>
+                              {{type}}
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-3 ">
+                        <div class="form-group ">
+                          <label class="control-label ">Invoice Amount</label>
+                          <input type="number" min="0" class="form-control" name="InvoiceAmount " required [(ngModel)]="iRFDetail.InvoiceAmount"
+                            [disabled]="isReadOnly" />
+                        </div>
+                      </div>
+                      <div class="col-md-5 ">
+                        <div class="form-group ">
+                          <label class="control-label ">Invoice Narration</label>
+                          <textarea type="text " class="form-control" maxlength="1000 " rows="1" required [(ngModel)]="iRFDetail.InvoiceNarration"
+                            [disabled]="isReadOnly" name='InvoiceNarration'></textarea>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="box">
+                  <div class="box-body">
+                    <div *ngIf="!isReadOnly" class="row">
+                      <div class="col-md-3">
+                        <div class="form-group ">
+                          <label class="control-label ">Select Client</label>
+                          <ng-select id="ddl_sourcingConstant" name="clientDR" [items]="masterData.Clients " (selected)="onClientChange($event) ">
+                          </ng-select>
+                        </div>
+                      </div>
+                      <div class="col-md-9 "></div>
+                    </div>
+                    <div class="row ">
+                      <div class="col-md-3 ">
+                        <div class="form-group ">
+                          <label class="control-label ">Client</label>
+                          <select class="form-control " name='ClientID' required [(ngModel)]="iRFDetail.ClientID"
+                            (change)="loadClients(); " disabled>
+                            <option *ngFor="let client of masterData.Clients " value={{client.id}}>
+                              {{client.text }}
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-3 ">
+                        <div class="form-group ">
+                          <label class="control-label ">Contract Code</label>
+                          <input type="text " class="form-control " name="ContractCode " [(ngModel)]="iRFDetail.ContractCode
+                              "
+                            [disabled]="isReadOnly " />
+                        </div>
+                      </div>
+                      <div class="col-md-3 ">
+                        <div class="form-group ">
+                          <label class="control-label ">PO Number</label>
+                          <input type="text " class="form-control " name="PO_Number " [(ngModel)]="iRFDetail.PO_Number
+                              "
+                            [disabled]="isReadOnly " />
+                        </div>
+                      </div>
+                      <div class="col-md-3 ">
+                        <div class="form-group ">
+                          <label class="control-label ">Commercial Details</label>
+                          <textarea type="text " class="form-control " maxlength="1000 " [disabled]="isReadOnly
+                              "
+                            rows="2 " [(ngModel)]="iRFDetail.CommercialDetails " name='CommercialDetails'></textarea>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row ">
+                      <div class="col-md-3 ">
+                        <div class="form-group ">
+                          <label class="control-label ">Location</label>
+                          <select class="form-control " name='location' required [disabled]="isReadOnly " [(ngModel)]="iRFDetail.ClientLocationID
+                              "
+                            (change)="FillAddress() " [disabled]="locations?.length==1 ">
+                            <option *ngFor="let location of locations " value={{location.ID}}>
+                              {{location.LocationCode }} - {{location.LocationName }}
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-3 ">
+                        <div class="form-group ">
+                          <label class="control-label ">Client SPOC</label>
+                          <input type="text " class="form-control " name="ClientSPOC_Name " required [(ngModel)]="iRFDetail.ClientSPOC_Name
+                              "
+                            [disabled]="isReadOnly " />
+                        </div>
+                      </div>
+                      <div class="col-md-3 ">
+                        <div class="form-group ">
+                          <label class="control-label ">Client Email</label>
+                          <input type="email" class="form-control" name="ClientMailID" required [(ngModel)]="iRFDetail.ClientMailID
+                              "
+                            [disabled]="isReadOnly " pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" />
+                        </div>
+                      </div>
+                      <div class="col-md-3 ">
+                        <div class="form-group ">
+                          <label class="control-label ">Contact Number</label>
+                          <input type="text " class="form-control " maxlength="25 " name="ClientContactNumber
+                              "
+                            [disabled]="isReadOnly " [(ngModel)]="iRFDetail.ClientContactNumber " />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row ">
+                      <div class="col-md-3 ">
+                        <div class="form-group ">
+                          <label class="control-label ">Invoice Billing Addres</label>
+                          <textarea type="text " class="form-control " required maxlength="1000 " [disabled]="isReadOnly
+                              "
+                            rows="2 " [(ngModel)]="iRFDetail.InvoiceBillingAddress " name='InvoiceBillingAddress'></textarea>
+                        </div>
+                      </div>
+                      <div class="col-md-3 ">
+                        <div class="form-group ">
+                          <label class="control-label ">Courier/Shipping Addres</label>
+                          <textarea type="text " class="form-control " maxlength="1000 " [disabled]="isReadOnly
+                              "
+                            required rows="2 " [(ngModel)]="iRFDetail.InvoiceShippingAddress " name='InvoiceShippingAddress'></textarea>
+                        </div>
+                      </div>
+                      <div class="col-md-3 ">
+                        <div class="form-group ">
+                          <label class="control-label ">Client GST Number</label>
+                          <input type="text " class="form-control " maxlength="25 " name="ClientGST_Number
+                              "
+                            [disabled]="isReadOnly " required [(ngModel)]="iRFDetail.ClientGST_Number " />
+                        </div>
+                      </div>
+                      <div class="col-md-3 ">
+                        <div class="form-group ">
+                          <label class="control-label ">Invoice Centre</label>
+                          <select class="form-control" name='InvoicingCentreID' required [(ngModel)]="iRFDetail.InvoicingCentreID"
+                            disabled>
+                            <option *ngFor="let branch of masterData.Branches " value={{branch.ID}}>
+                              {{branch.Code}} - {{branch.Description}}
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row ">
+                      <div class="col-md-3 ">
+                        <div class="form-group ">
+                          <label class="control-label ">Client Type</label>
+                          <select class="form-control " name='ClientType' [(ngModel)]="iRFDetail.ClientType"
+                            [disabled]="isReadOnly || iRFDetail.IRF_Type=='Selection' ">
+                            <option *ngFor="let type of masterData.ClientType " value={{type}}>
+                              {{type}}
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-3 ">
+                        <div class="form-group ">
+                          <label class="control-label ">Credit Period</label>
+                          <input type="number " min="0 " class="form-control " name="CreditPeriod " [disabled]="isReadOnly
+                              "
+                            [(ngModel)]="iRFDetail.CreditPeriod " />
+                        </div>
+                      </div>
+                      <div class="col-md-3 ">
+                        <div class="form-group ">
+                          <label class="control-label ">Advance Invoiced</label>
+                          <input type="number " min="0 " class="form-control " name="AdvanceAdjustment " [disabled]="isReadOnly
+                              "
+                            [(ngModel)]="iRFDetail.AdvanceAdjustment " />
+                        </div>
+                      </div>
+                      <div class="col-md-3 ">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </tab>
+          <tab>
+            <span class="header " *tabHeading>
+              <i class="fa fa-users "></i> &nbsp;Candidates</span>
+            <div class="box box-primary ">
+              <div class="box-body ">
+                <div class="row ">
+                  <div class="col-md-12 ">
+                    <div>
+                      <button *ngIf="!isReadOnly " type="button " class="btn btn-primary pull-left " (click)="openCandidatePopup(); ">Add
+                        Candidate</button>
+                      <br />
+                      <br />
+                    </div>
+                    <div class="box box-primary " *ngIf="iRFDetail.Candidates?.length>0">
+                      <div class="box-body table-responsive no-padding">
+                        <table id="tblClients" class="table table-hover">
+                          <thead>
+                            <tr>
+                              <th> Candidate Name </th>
+                              <th> Sourcing Consultant </th>
+                              <th> Person ID </th>
+                              <th> Job Title </th>
+                              <th> Job Category </th>
+                              <th> D.O.J </th>
+                              <th> Location </th>
+                              <th> Annual CTC </th>
+                              <th *ngIf="!isReadOnly"> </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let candidate of iRFDetail.Candidates;let idx = index;">
+                              <td *ngIf="candidate.RowState!='D'"> {{candidate.CandidateName}} </td>
+                              <td *ngIf="candidate.RowState!='D'"> {{candidate.SourcingConsultant.text}} </td>
+                              <td *ngIf="candidate.RowState!='D'"> {{candidate.PersonID}} </td>
+                              <td *ngIf="candidate.RowState!='D'"> {{candidate.OfferedJobTitle}} </td>
+                              <td *ngIf="candidate.RowState!='D'"> {{candidate.JobCategory}} </td>
+                              <td *ngIf="candidate.RowState!='D'"> {{candidate.DateOfJoining | amDateFormat:
+                                'DD-MM-YYYY'}} </td>
+                              <td *ngIf="candidate.RowState!='D'"> {{candidate.JobLocation}} </td>
+                              <td *ngIf="candidate.RowState!='D'"> {{candidate.AnnualCTC}} </td>
+                              <td *ngIf="!isReadOnly && candidate.RowState!='D'">
+                                <li style="cursor:pointer" class="fa fa-pencil" aria-hidden="true" (click)="editCandidate(candidate,idx);"></li>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <li style="cursor:pointer" class="fa fa-trash-o" aria-hidden="true" (click)="openCandidateDeleteModal(idx);"></li>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </tab>
+          <tab>
+            <span class="header" *tabHeading>
+              <i class="fa fa-paperclip"></i> &nbsp;Attachment</span>
+            <div class="box box-primary">
+              <div class="box-body">
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group ">
+                      <label class="control-label ">Special Instructions</label>
+                      <textarea type="text " class="form-control " maxlength="1000 " [disabled]="isReadOnly
+                          "
+                        rows="2 " [(ngModel)]="iRFDetail.Comments " name='Comments'></textarea>
+                    </div>
+                  </div>
+                  <div class="col-md-4"></div>
+                  <div class="col-md-4"></div>
+                </div>
+                <div class="row" *ngIf="!isReadOnly">
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <input type="file" class="btn btn-primary" ng2FileSelect [uploader]="uploader" multiple />
+                    </div>
+                    <div class="form-group">
+                      <div ng2FileDrop [ngClass]="{'another-file-over-class': hasAnotherDropZoneOver}" (fileOver)="fileOverAnother($event)"
+                        [uploader]="uploader" class="well my-drop-zone">
+                        Drop your files here
+                      </div>
+                    </div>
+                    <div class="form-group" *ngIf="uploader.queue?.length>0">
+                      <button type="button" class="btn btn-success btn-s" (click)="uploader.uploadAll()" [disabled]="!uploader.getNotUploadedItems().length || uploader.queue.length>10">
+                        <span class="glyphicon glyphicon-upload"></span> Upload
+                      </button>
+                      <button type="button" class="btn btn-warning btn-s" (click)="uploader.cancelAll()" [disabled]="!uploader.isUploading">
+                        <span class="glyphicon glyphicon-ban-circle"></span> Cancel all
+                      </button>
+                      <button type="button" class="btn btn-danger btn-s" (click)="uploader.clearQueue()" [disabled]="!uploader.queue.length">
+                        <span class="glyphicon glyphicon-trash"></span> Remove all
+                      </button>
+                    </div>
+                  </div>
+                  <div class="col-md-9">
+                    <div class="box box-primary" *ngIf="uploader.queue?.length>0">
+                      <div class="box-body table-responsive no-padding">
+                        <table id="tblClients" class="table table-hover">
+                          <thead>
+                            <tr>
+                              <th>Name</th>
+                              <th>Size</th>
+                              <th>Progress</th>
+                              <th>Status</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let item of uploader.queue">
+                              <td>
+                                <strong>{{ item?.file?.name }}</strong>
+                              </td>
+                              <td nowrap>{{ item?.file?.size/1024/1024 | number:'.2' }} MB</td>
+                              <td>
+                                <div class="progress" style="margin-bottom: 0;">
+                                  <div class="progress-bar" role="progressbar" [ngStyle]="{ 'width': item.progress + '%' }"></div>
+                                </div>
+                              </td>
+                              <td class="text-center">
+                                <span *ngIf="item.isSuccess">
+                                  <i class="glyphicon glyphicon-ok"></i>
+                                </span>
+                                <span *ngIf="item.isCancel">
+                                  <i class="glyphicon glyphicon-ban-circle"></i>
+                                </span>
+                                <span *ngIf="item.isError">
+                                  <i class="glyphicon glyphicon-remove"></i>
+                                </span>
+                              </td>
+                              <td>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="row" *ngIf="iRFDetail.Attachments?.length>0">
+                      <div class="col-md-12">
+                        <div class="box box-primary">
+                          <div class="box-body table-responsive no-padding">
+                            <table id="tblClients" class="table table-hover">
+                              <thead>
+                                <tr>
+                                  <th> Comments </th>
+                                  <th> Client
+                                    <br /> Confirmation </th>
+                                  <th> File Name</th>
+                                  <th> </th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let item of iRFDetail.Attachments;let idx = index;">
+                                  <td *ngIf="item.RowState!='D'">
+                                    <textarea [disabled]="isReadOnly" type="text" class="form-control" maxlength="1000"
+                                      rows="1" [(ngModel)]="item.Comments" name='{{idx}}AttachmentComments'></textarea>
+                                  </td>
+                                  <td *ngIf="item.RowState!='D'">
+                                    <input [disabled]="isReadOnly" type="checkbox" class="checkbox-primary" name="{{idx}}AttachmentIsClientConfirmationMail"
+                                      [(ngModel)]="item.IsClientConfirmationMail"> </td>
+                                  <td *ngIf="item.RowState!='D'">
+                                    <input disabled type="text" required class="form-control" name="{{idx}}AttachmentFileName"
+                                      [(ngModel)]="item.FileName" />
+                                  </td>
+                                  <td *ngIf="item.RowState!='D'">
+                                    <app-file-download [documentId]="item.DocumentID"></app-file-download>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <li *ngIf="!isReadOnly" style="cursor:pointer" class="fa fa-trash-o" aria-hidden="true"
+                                      (click)="openAtatchmentDeleteModal(idx);"></li>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </tab>
+          <tab [active]="isRevenueSharing">
+            <span class="header" *tabHeading>
+              <i class="fa fa-share-alt"></i> &nbsp;GP Sharing</span>
+            <div class="box box-primary">
+              <div class="box-body">
+                <div class="row">
+                  <div class="col-md-2">
+                    <div class="form-group pull-left">
+                      <label class="control-label">Gross Profit</label>
+                      <input type="number" [disabled]="isReadOnly" class="form-control" name="GrossProfit" required
+                        [(ngModel)]="iRFDetail.GrossProfit" />
+                    </div>
+                  </div>
+                  <div class="col-md-10">
+                    <div class="pull-left" style="margin-top: 20px;">
+                      <button *ngIf="(!isReadOnly || isRevenueSharing) && allowRSEdit" type="button" class="btn btn-primary"
+                        (click)="openRevenuePopup();" [disabled]="iRFDetail.GrossProfit == null">Add</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="row" *ngIf="iRFDetail.RevenueSharing?.length>0">
+                  <div class="col-md-12">
+                    <div class="box box-primary">
+                      <div class="box-body table-responsive no-padding">
+                        <table id="tblClients" class="table table-hover">
+                          <thead>
+                            <tr>
+                              <th> Entity Type </th>
+                              <th> Entity Name </th>
+                              <th> Sourcing Consultant </th>
+                              <th> Sharing Type</th>
+                              <th> Value </th>
+                              <th> Computed Value </th>
+                              <th> Remarks </th>
+                              <th *ngIf="!isReadOnly || isRevenueSharing"> </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let revenue of iRFDetail.RevenueSharing;let idx = index;">
+                              <td *ngIf="revenue.RowState!='D'"> {{revenue.EntityType}} </td>
+                              <td *ngIf="revenue.RowState!='D'">{{getEntityValue(revenue.EntityType, revenue.EntityID)}}
+                              </td>
+                              <td *ngIf="revenue.RowState!='D'">{{revenue.SourcingConsultant.text}} </td>
+                              <td *ngIf="revenue.RowState!='D'"> {{revenue.SharingType}} </td>
+                              <td *ngIf="revenue.RowState!='D'"> {{revenue.Value }} </td>
+                              <td *ngIf="revenue.RowState!='D'"> {{revenue.ComputedValue}} </td>
+                              <td *ngIf="revenue.RowState!='D'"> {{revenue.Remarks}} </td>
+                              <td *ngIf="(!isReadOnly || isRevenueSharing) && revenue.RowState!='D' && allowRSEdit">
+                                <li style="cursor:pointer" class="fa fa-pencil" aria-hidden="true" (click)="editRevenueSharing(revenue,idx);"></li>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <li style="cursor:pointer" class="fa fa-trash-o" aria-hidden="true" (click)="openRevenueDeleteModal(idx);"></li>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <button type="button" *ngIf="isRevenueSharing && allowRSEdit" (click)="openConfirmRevenueSharing();"
+                      class="btn btn-primary">Update Revenue Sharing</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </tab>
+          <tab *ngIf="isReadOnly || canConsultantReviewRearks">
+            <span class="header" *tabHeading>
+              <i class="fa fa-comments"></i> &nbsp;Remarks</span>
+            <div class="box box-primary">
+              <div class="box-body">
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group ">
+                      <label class="control-label ">Remarks</label>
+                      <textarea type="text " [disabled]="canConsultantReviewRearks || isAcceptedIRF" class="form-control"
+                        minlength="10" maxlength="5000" rows="5" [(ngModel)]="iRFDetail.ApproverRemarks " name='ApproverRemarks'></textarea>
+                    </div>
+                  </div>
+                  <div class="col-md-8">
+                  </div>
+                </div>
+                <div class="row" *ngIf="!isAcceptedIRF">
+                  <div class="col-md-4">
+                    <a class="btn btn-default" *ngIf="isReadOnly" routerLink='/home/irf-reviewer-home'>Cancel</a>&nbsp;&nbsp;
+                    <button type="button" *ngIf="isReadOnly" (click)="onApprove();" class="btn btn-success" [disabled]="iRFDetail.IRF_Type == null">Approve</button>&nbsp;&nbsp;
+                    <button type="button" *ngIf="isReadOnly" (click)="onReject();" class="btn btn-danger" [disabled]="!iRFDetail.ApproverRemarks">Reject</button>
+                  </div>
+                  <div class="col-md-8"></div>
+                </div>
+              </div>
+            </div>
+          </tab>
+        </tabset>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="pull-right">
+              <a class="btn btn-default" *ngIf="!isReadOnly" routerLink='/home/irf-consultant-home'>Cancel</a>&nbsp;&nbsp;
+              <button type="button" *ngIf="!isReadOnly && formAction!='revise'" (click)="onSave();" class="btn btn-primary"
+                [disabled]="!myForm.form.valid" [disabled]="iRFDetail.IRF_Type == null">Save</button>&nbsp;&nbsp;
+              <button type="button" *ngIf="!isReadOnly" (click)="validateIRF();" class="btn btn-primary" [disabled]="!myForm.form.valid">Submit</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+</div>
+<modal #addCandidateModal>
+  <form novalidate #myCandidateForm="ngForm">
+    <modal-header [show-close]="true">
+      <h3 class="modal-title">{{candidateModalTitle}}</h3>
+    </modal-header>
+    <modal-body>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label class="control-label">Select Sourcing Consultant</label>
+            <ng-select id="ddl_sourcingConstant" [(ngModel)]="sourcingConsultant" name="sourcingConsultant" [items]="users"
+              (selected)="onUserChange($event)">
+            </ng-select>
+          </div>
+          <div class="form-group">
+            <label class="control-label">Sourcing Consultant</label>
+            <input type="text" class="form-control" name="sourcingConsultantLabel" readonly maxlength="100" required
+              [(ngModel)]="sourcingConsultantLabel" />
+          </div>
+          <div class="form-group">
+            <label class="control-label">Candidate Name</label>
+            <input type="text" class="form-control" name="CandidateName" maxlength="100" required [(ngModel)]="IRFCandidate.CandidateName" />
+          </div>
+          <div class="form-group">
+            <label class="control-label">Person ID</label>
+            <input type="text" class="form-control" name="PersonID" maxlength="100" [(ngModel)]="IRFCandidate.PersonID" />
+          </div>
+          <div class="form-group">
+            <label class="control-label">Job Title</label>
+            <input type="text" class="form-control" name="OfferedJobTitle" maxlength="100" required [(ngModel)]="IRFCandidate.OfferedJobTitle" />
+          </div>
+          <div class="form-group">
+            <label class="control-label">Job Category</label>
+            <input type="text" class="form-control" name="JobCategory" maxlength="100" [(ngModel)]="IRFCandidate.JobCategory" />
+          </div>
+          <div class="form-group">
+            <label class="control-label">D.O.J</label>
+            <my-date-picker [(ngModel)]="dobCtrl" [options]="myDatePickerOptions" required name='DateOfBirth'
+              (dateChanged)="onDateChanged($event)"></my-date-picker>
+          </div>
+          <div class="form-group">
+            <label class="control-label">Location</label>
+            <input type="text" class="form-control" name="JobLocation" required maxlength="100" required [(ngModel)]="IRFCandidate.JobLocation" />
+          </div>
+          <div class="form-group">
+            <label class="control-label">Annual CTC</label>
+            <input type="number" class="form-control" name="AnnualCTC" maxlength="100" [required]="iRFDetail.IRF_Type != 'Staffing'"
+              [(ngModel)]="IRFCandidate.AnnualCTC" />
+          </div>
+        </div>
+      </div>
+    </modal-body>
+    <modal-footer>
+      <div>
+        <a class="btn btn-default" (click)="addCandidateModal.dismiss()">Cancel</a>
+        <button type="button" (click)="addCandidate();" class="btn btn-primary" [disabled]="!myCandidateForm.form.valid">{{candidateModalBtnTitle}}</button>
+      </div>
+    </modal-footer>
+  </form>
+</modal>
+<modal #candidateDeletemodal>
+  <modal-header [show-close]="true">
+    <h3 class="modal-title">Delete Candidate</h3>
+  </modal-header>
+  <modal-body>
+    Do you want to delete the selected candidate ?
+  </modal-body>
+  <modal-footer>
+    <div>
+      <a class="btn btn-default" (click)="candidateDeletemodal.dismiss()">Cancel</a>
+      <button type="button" (click)="deleteCandidate();" class="btn btn-primary">Delete</button>
+    </div>
+  </modal-footer>
+</modal>
+<modal #addRevenueModal *ngIf="!isReadOnly || isRevenueSharing">
+  <form novalidate #addRevenueModalForm="ngForm">
+    <modal-header [show-close]="true">
+      <h3 class="modal-title">{{revenueModalTitle}}</h3>
+    </modal-header>
+    <modal-body>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label class="control-label">Select Consultant</label>
+            <ng-select id="ddl_sourcingConstantRevenue" [(ngModel)]="sourcingConsultantRevenue" name="sourcingConsultantRevenue"
+              [items]="users" (selected)="onRevenueUserChange($event)">
+            </ng-select>
+          </div>
+          <div class="form-group">
+            <label class="control-label">Consultant</label>
+            <input type="text" class="form-control" name="sourcingRevenueConsultantLabel" readonly maxlength="100"
+              required [(ngModel)]="sourcingRevenueConsultantLabel" />
+          </div>
+          <div class="form-group">
+            <label class="control-label">Entity Type</label>
+            <select class="form-control" name='EntityType' required [(ngModel)]="IRFRevenue.EntityType" (change)="onChangeEntityType();">
+              <option *ngFor="let entity of masterData.EntityType" value={{entity}}>
+                {{entity}}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="control-label" *ngIf="IRFRevenue.EntityType != null && IRFRevenue.EntityType != ''">Entity</label>
+            <select *ngIf="IRFRevenue.EntityType == 'BusinessPartner'" class="form-control" [(ngModel)]="businessPartnerId"
+              name='BusinessPartners' [required]="IRFRevenue.EntityType == 'BusinessPartner' ? true : false" (change)="setEntityId(IRFRevenue.EntityType);">
+              <option *ngFor="let bp of masterData.BusinessPartners" value={{bp.Id}} [selected]='bp.Id == businessPartnerId'>
+                {{bp.BusinessPartnerCode}} - {{bp.BusinessPartnerName}}
+              </option>
+            </select>
+            <select *ngIf="IRFRevenue.EntityType == 'CityBusinessPartner'" class="form-control" [(ngModel)]="cityBusinessPartnerId"
+              name='CityBusinessPartners' [required]="IRFRevenue.EntityType == 'CityBusinessPartner' ? true : false"
+              (change)="setEntityId(IRFRevenue.EntityType);">
+              <option *ngFor="let cbp of masterData.CityBusinessPartners" value={{cbp.Id}}>
+                {{cbp.CityBusinessPartnerCode}} - {{cbp.CityBusinessPartnerName}}
+              </option>
+            </select>
+            <select *ngIf="IRFRevenue.EntityType == 'CIEL'" class="form-control" name='BusinessPartners' [(ngModel)]="branchId"
+              [required]="IRFRevenue.EntityType == 'CIEL' ? true : false" (change)="setEntityId(IRFRevenue.EntityType);">
+              <option *ngFor="let branch of masterData.Branches" value={{branch.ID}}>
+                {{branch.Code}} - {{branch.Description}}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="control-label">Sharing Type</label>
+            <select class="form-control" name='SharingType' required [(ngModel)]="IRFRevenue.SharingType">
+              <option *ngFor="let type of masterData.SharingType" value={{type}}>
+                {{type}}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="control-label">Value</label>
+            <input type="number" class="form-control" name="Value" maxlength="100" required [(ngModel)]="IRFRevenue.Value"
+              (blur)="validatePercentageGPSharing();" />
+            <span *ngIf="IRFRevenue.SharingType=='Percentage'" class="text-red">{{gpSharingErrorMsg}}</span>
+          </div>
+          <div class="form-group">
+            <label class="control-label">Remarks</label>
+            <textarea type="text" class="form-control" maxlength="1000" rows="2" [(ngModel)]="IRFRevenue.Remarks" name='IRFRevenueRemarks'></textarea>
+          </div>
+        </div>
+      </div>
+    </modal-body>
+    <modal-footer>
+      <div>
+        <a class="btn btn-default" (click)="addRevenueModal.dismiss()">Cancel</a>
+        <button type="button" (click)="addRevenue();" class="btn btn-primary" [disabled]="!addRevenueModalForm.form.valid">{{revenueModalBtnTitle}}</button>
+      </div>
+    </modal-footer>
+  </form>
+</modal>
+<modal #revenueDeletemodal>
+  <modal-header [show-close]="true">
+    <h3 class="modal-title">Delete Revenue</h3>
+  </modal-header>
+  <modal-body>
+    Do you want to delete the selected revenue ?
+  </modal-body>
+  <modal-footer>
+    <div>
+      <a class="btn btn-default" (click)="revenueDeletemodal.dismiss()">Cancel</a>
+      <button type="button" (click)="deleteRevenue();" class="btn btn-primary">Delete</button>
+    </div>
+  </modal-footer>
+</modal>
+<modal #irfSubmissionmodal *ngIf="!isReadOnly">
+  <modal-header [show-close]="true">
+    <h3 class="modal-title">{{irfSubmissionMsg}}</h3>
+  </modal-header>
+  <modal-body>
+    {{irfWarningMessage}}
+    <br />
+    <div class="row" *ngIf="formAction == 'revise'">
+      <div class="col-md-12 ">
+        <div class="form-group ">
+          <label class="control-label ">Revision Remarks</label>
+          <textarea type="text" class="form-control" required maxlength="1000" rows="2" [(ngModel)]="iRFDetail.ReviseRemarks"
+            *ngIf="formAction == 'revise'" name='ReviseRemarks'></textarea>
+        </div>
+      </div>
+    </div>
+  </modal-body>
+  <modal-footer>
+    <div>
+      <a class="btn btn-default" (click)="irfSubmissionmodal.dismiss()">Cancel</a>
+      <button type="button" (click)="onSubmit();" class="btn btn-primary" [disabled]="formAction == 'revise' && (iRFDetail.ReviseRemarks == null || iRFDetail.ReviseRemarks =='')">Yes</button>
+    </div>
+  </modal-footer>
+</modal>
+<modal #irfReviewmodal>
+  <modal-header [show-close]="true">
+    <h3 class="modal-title">IRF Submission</h3>
+  </modal-header>
+  <modal-body>
+    {{irfReviewerMessage}}
+  </modal-body>
+  <modal-footer>
+    <div>
+      <a class="btn btn-default" (click)="irfReviewmodal.dismiss()">Cancel</a>
+      <button type="button" (click)="saveReview();" class="btn btn-primary">Yes</button>
+    </div>
+  </modal-footer>
+</modal>
+<modal #updateRevenueSharing *ngIf="isRevenueSharing">
+  <modal-header [show-close]="true">
+    <h3 class="modal-title">Update Revenue Sharing</h3>
+  </modal-header>
+  <modal-body>
+    Do you want to update revenue sharing?
+  </modal-body>
+  <modal-footer>
+    <div>
+      <a class="btn btn-default" (click)="updateRevenueSharing.dismiss()">Cancel</a>
+      <button type="button" (click)="updateRS();" class="btn btn-primary">Yes</button>
+    </div>
+  </modal-footer>
+</modal>
+<modal #attachmentDeletemodal>
+  <modal-header [show-close]="true">
+    <h3 class="modal-title">Delete Attachment</h3>
+  </modal-header>
+  <modal-body>
+    Do you want to delete the uploaded attachment?
+  </modal-body>
+  <modal-footer>
+    <div>
+      <a class="btn btn-default" (click)="attachmentDeletemodal.dismiss()">Cancel</a>
+      <button type="button" (click)="deleteAttachment();" class="btn btn-primary">Yes</button>
+    </div>
+  </modal-footer>
+</modal>

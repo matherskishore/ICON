@@ -1,0 +1,302 @@
+<div class="content-wrapper">
+  <section class="content-header">
+    <h1>
+      Claim Sheet Payout Request
+    </h1>
+  </section>
+  <section class="content">
+    <div class="row">
+      <div class="col-md-12">
+        <div *ngIf="msg" role="alert" class="alert alert-info alert-dismissible">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+          <span class="sr-only">Error:</span> {{msg}}
+        </div>
+        <br />
+        <div class="alert alert-info" role="alert" *ngIf="indLoading">
+          <img src="assets/images/loading.gif" width="32" height="32" /> Loading...
+        </div>
+      </div>
+    </div>
+    <div>
+      <form novalidate #myForm="ngForm">
+        <tabset>
+          <tab class="header">
+            <span class="header" *tabHeading>
+              <i class="fa fa-file"></i>&nbsp; Payout Request Details
+            </span>
+            <div class="box box-info">
+              <div class="box-body">
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group ">
+                      <label class="control-label ">Total Claimable Amount</label>
+                      <label class="form-control" name='RequestedAmount'>{{claimSheets.RequestedAmount}}
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="box box-primary">
+              <div class="box-header with-border">
+                <h3 class="box-title">Claim Request Form</h3>
+              </div>
+              <div class="box-body">
+                <form novalidate #myForm="ngForm">
+                  <div class="row">
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label class="control-label">Payout Request Date</label>
+                        <my-date-picker [disabled]="isReadOnly" [(ngModel)]="dateCreatedOn"
+                          [options]="myDatePickerOptions" required name="dateCreatedOn"
+                          (dateChanged)="onDateChanged($event)"></my-date-picker>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label class="control-label">Finance Cost</label>
+                        <input (keyup)="onChange($event,'FinanceCost')" type="number" [disabled]="isReadOnly"
+                          class="form-control" name="FinanceCost" required [(ngModel)]="claimSheets.FinanceCost" />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label class="control-label">License Cost</label>
+                        <input (keyup)="onChange($event, 'LicenseCost')" type="number" [disabled]="isReadOnly"
+                          class="form-control" name="LicenseCost" required [(ngModel)]="claimSheets.LicenseCost" />
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label class="control-label">Advances</label>
+                        <input (keyup)="onChange($event, 'Advances')" type="number" [disabled]="isReadOnly"
+                          class="form-control" name="Advances" required [(ngModel)]="claimSheets.Advances" />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label class="control-label">Portal Fee</label>
+                        <input (keyup)="onChange($event, 'PortalFee')" type="number" [disabled]="isReadOnly"
+                          class="form-control" name="PortalFee" required [(ngModel)]="claimSheets.PortalFee" />
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label class="control-label">Miscellaneous Adjustment Amount</label>
+                        <input (keyup)="onChange($event, 'MiscellaneousAdjustmentAmount')" type="number"
+                          [disabled]="isReadOnly" class="form-control" name="MiscellaneousAdjustmentAmount" required
+                          [(ngModel)]="claimSheets.MiscellaneousAdjustmentAmount" />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-4">
+                      <div *ngIf="!isReadOnly">
+                        <div class="form-group">
+                          <input type="file" class="btn btn-primary" ng2FileSelect [uploader]="uploader" />
+                        </div>
+                        <div class="form-group" *ngIf="uploader.queue?.length>0">
+                          <button type="button" class="btn btn-success btn-s" (click)="uploader.uploadAll()"
+                            [disabled]="!uploader.getNotUploadedItems().length || uploader.queue.length>10">
+                            <span class="glyphicon glyphicon-upload"></span> Upload
+                          </button>
+                          <button type="button" class="btn btn-danger btn-s" (click)="uploader.clearQueue()"
+                            [disabled]="!uploader.queue.length">
+                            <span class="glyphicon glyphicon-trash"></span> Remove
+                          </button>
+                        </div>
+                      </div>
+                      <div class="table-responsive no-padding">
+                        <table id="tblClients" class="table table-hover">
+                          <thead>
+                            <tr>
+                              <th>Supporting Documents</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>{{claimSheets.FileName}}</td>
+                              <td>
+                                <app-file-download [documentId]="claimSheets.SupportingDocumentId"> </app-file-download>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="box box-primary" *ngIf="uploader.queue?.length>0 && !isReadOnly">
+                        <div class="box-body table-responsive no-padding">
+                          <table id="tblClients" class="table table-hover">
+                            <thead>
+                              <tr>
+                                <th>Name</th>
+                                <th>Size</th>
+                                <th>Progress</th>
+                                <th>Status</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let item of uploader.queue">
+                                <td>
+                                  <strong>{{ item?.file?.name }}</strong>
+                                </td>
+                                <td nowrap>{{ item?.file?.size/1024/1024 | number:'.2' }} MB</td>
+                                <td>
+                                  <div class="progress" style="margin-bottom: 0;">
+                                    <div class="progress-bar" role="progressbar"
+                                      [ngStyle]="{ 'width': item.progress + '%' }"></div>
+                                  </div>
+                                </td>
+                                <td class="text-center">
+                                  <span *ngIf="item.isSuccess">
+                                    <i class="glyphicon glyphicon-ok"></i>
+                                  </span>
+                                  <span *ngIf="item.isCancel">
+                                    <i class="glyphicon glyphicon-ban-circle"></i>
+                                  </span>
+                                  <span *ngIf="item.isError">
+                                    <i class="glyphicon glyphicon-remove"></i>
+                                  </span>
+                                </td>
+                                <td>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label class="control-label">Net Claimable Amount</label>
+                        <label class="form-control" name='NetClaimAmount'>{{claimSheets.NetClaimAmount}}
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="form-group">
+                        <label class="control-label">Remarks</label>
+                        <textarea type="text" [disabled]="preventTyping" class="form-control" maxlength="10000" rows="2"
+                          [(ngModel)]="claimSheets.RequesterRemarks" name='Remarks'></textarea>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="pull-right">
+                        <button class="btn btn-default" *ngIf="!isReadOnly"
+                          (click)="onCancel();">Cancel</button>&nbsp;&nbsp;
+                        <button type="button" *ngIf="!isReadOnly" (click)="openSaveModal();" class="btn btn-primary"
+                          [disabled]="!myForm.form.valid">{{saveBtnText}}</button>&nbsp;&nbsp;
+                        <button type="button" *ngIf="isBPMTeam(user.RoleCode) || isAccountsTeam(user.RoleCode)"
+                          (click)="onApproveReject('Approve');" class="btn btn-success">Approve</button>&nbsp;&nbsp;
+                        <button type="button" *ngIf="isBPMTeam(user.RoleCode) || isAccountsTeam(user.RoleCode)"
+                          (click)="onApproveReject('Reject');" class="btn btn-danger">Reject</button>&nbsp;&nbsp;
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </tab>
+          <tab>
+            <span class="header" *tabHeading>
+              <i class="fa fa-users"></i>&nbsp;IRF List and Details
+            </span>
+            <div class="box box-info">
+              <div class="box-header with-border">
+                <h3 class="box-title">Claim Sheets</h3>
+                <div class="pull-right" *ngIf="claimSheetsArray?.length>0">
+                  <button type="button" class="btn-xs btn-success" (click)="downloadExcel();"> Download Excel
+                  </button>
+                </div>
+              </div>
+              <div class="form-horizontal">
+                <div class="box-body">
+                  <div class="box-body table-responsive no-padding">
+                    <div *ngIf="claimSheetsArray?.length>0">
+                      <ag-grid-angular #agGrid id="myGrid" style="width: 100%; height: 600px;" class="ag-theme-balham"
+                        [enableSorting]="true" [enableFilter]="true" [enableColResize]="true"
+                        [rowData]="claimSheetsArray" [columnDefs]="columnDefs" (gridReady)="onGridReadySub($event)"
+                        pagination=true rowSelection="multiple" [enableColResize]="true"
+                        (cellClicked)='onCellClicked($event)' (filterChanged)='onFilterChange($event)'>
+                      </ag-grid-angular>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </tab>
+        </tabset>
+      </form>
+    </div>
+  </section>
+</div>
+
+<modal #submitClaim>
+  <modal-header [show-close]="true">
+    <h3 class="modal-title">Payout Request</h3>
+  </modal-header>
+  <modal-body>
+    Please confirm the Net Claimable Amount
+    <br />
+    <label class="control-label">Net Claimable Amount</label>
+    <label class="form-control" name='NetClaimAmount'>{{claimSheets.NetClaimAmount}}
+    </label>
+  </modal-body>
+  <modal-footer>
+    <div>
+      <a class="btn btn-default" (click)="submitClaim.dismiss()">Cancel</a>
+      <button type="button" (click)="onSave();" class="btn btn-primary">Yes</button>
+    </div>
+  </modal-footer>
+</modal>
+
+<modal #approveClaim>
+  <modal-header [show-close]="true">
+    <h3 class="modal-title">Approve Request</h3>
+  </modal-header>
+  <modal-body>
+    Are you sure you want to approve the request?
+    <br />
+    <textarea type="text" class="form-control" maxlength="500" rows="2" [required]
+      [(ngModel)]="claimSheets.ApproverRemarks" name="remarks"></textarea>
+  </modal-body>
+  <modal-footer>
+    <div>
+      <a class="btn btn-default" (click)="approveClaim.dismiss();">No</a>
+      <button type="button" (click)="onApprove();" class="btn btn-primary">Yes</button>
+    </div>
+  </modal-footer>
+</modal>
+
+<modal #dismissClaim>
+  <modal-header [show-close]="true">
+    <h3 class="modal-title">Dismiss Request</h3>
+  </modal-header>
+  <modal-body>
+    Are you sure you want to dismiss the request?
+    <br />
+    <textarea type="text" class="form-control" maxlength="500" rows="2" [required]
+      [(ngModel)]="claimSheets.ApproverRemarks" name="remarks"></textarea>
+  </modal-body>
+  <modal-footer>
+    <div>
+      <a class="btn btn-default" (click)="dismissClaim.dismiss();">No</a>
+      <button type="button" [disabled]="(claimSheets.ApproverRemarks == null || claimSheets.ApproverRemarks == '')"
+        (click)="onDismiss();" class="btn btn-primary">Yes</button>
+    </div>
+  </modal-footer>
+</modal>

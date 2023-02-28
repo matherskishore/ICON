@@ -1,0 +1,252 @@
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>
+      Clients
+    </h1>
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="row">
+      <div class="col-md-12">
+        <div *ngIf="msg" role="alert" class="alert alert-info alert-dismissible">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+          <span class="sr-only">Error:</span> {{msg}}
+        </div>
+        <br />
+        <div class="alert alert-info" role="alert" *ngIf="indLoading">
+          <img src="assets/images/loading.gif" width="32" height="32" /> Loading...
+        </div>
+        <div>
+          <button type="button" class="btn btn-primary pull-left" (click)="addClient();">Add New Client</button>
+          <br />
+          <br />
+        </div>
+        <div *ngIf="_clients?.length>0" class="row">
+          <div class="col-md-12">
+            <div class="pull-right">
+              <button type="button" (click)="addOnAccount();" class="btn-xs btn-info ">Add On Account</button>
+              <button type="button" (click)="editClient();" class="btn-xs btn-info ">Edit</button>
+              <button type="button" (click)="deleteClient()" [disabled]='indLoading'
+                class="btn-xs btn-danger ">Delete</button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="_clients?.length>0">
+          <ag-grid-angular #agGrid id="myGrid" style="width: 100%; height: 600px;" class="ag-theme-balham"
+            [enableSorting]="true" [enableFilter]="true" [enableColResize]="true" [rowData]="_clients"
+            [columnDefs]="columnDefs" (gridReady)="onGridReady($event)" pagination=true rowSelection="single"
+            (cellClicked)='onCellClicked($event)'>
+          </ag-grid-angular>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<modal #addmodal>
+  <form novalidate #myForm="ngForm">
+    <modal-header [show-close]="true">
+      <h3 class="modal-title">{{modalTitle}}</h3>
+    </modal-header>
+    <modal-body>
+      <div class="row">
+        <div class="col-md-12">
+          <div *ngIf="saveErrorMsg && saveErrorMsg!==''" role="alert" class="alert alert-danger alert-dismissible">
+            {{saveErrorMsg}}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="control-label">Code</label>
+            <input type="text" class="form-control" name="Code" maxlength="100" required
+              [(ngModel)]="_client.ClientCode" />
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="control-label">Name</label>
+            <input type="text" class="form-control" name="Name" maxlength="100" required
+              [(ngModel)]="_client.ClientName" />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="control-label">Alias Name</label>
+            <input type="text" class="form-control" name="AliasName" maxlength="100" required
+              [(ngModel)]="_client.AliasName" />
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="control-label">Group Company</label>
+            <input type="text" class="form-control" name="GroupCompany" maxlength="100"
+              [(ngModel)]="_client.GroupCompany" />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <div class="form-group">
+              <label class="control-label">Industry</label>
+              <select class="form-control" name='Industry' required [(ngModel)]="_client.Industry">
+                <option *ngFor="let industry of targetIndustries " value={{industry.id}}>
+                  {{industry.text}}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label class="control-label">Status</label>
+          <select class="form-control" name='Status' required [(ngModel)]="_client.Status">
+            <option value="0"> Inactive </option>
+            <option value="1"> Active </option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="control-label">Tally Reference #</label>
+            <input type="text" class="form-control" name="TallyReferenceId" maxlength="100" required
+              [(ngModel)]="_client.TallyReferenceId" />
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="control-label">Line Of Business Signed For</label>
+            <select class="form-control" name='LineOfBusiness' required [(ngModel)]="_client.LineOfBusiness">
+              <option value="GeneralStaffing"> General Staffing </option>
+              <option value="LVPStaffing"> LVP Staffing </option>
+              <option value="Selection"> Selection </option>
+              <option value="RPO"> RPO </option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label class="control-label">Assignment One Liner</label>
+            <input type="text" class="form-control" name="AssignmentOneLiner" maxlength="100" required
+              [(ngModel)]="_client.AssignmentOneLiner" />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label class="control-label">Assignment Details</label>
+            <textarea type="text" class="form-control" name="AssignmentDetails" maxlength="1000" rows="2"
+              [(ngModel)]="_client.AssignmentDetails"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group ">
+            <label class="control-label ">Signed In Location</label>
+            <select class="form-control" name='SignedInLocation' required [(ngModel)]="_client.SignedInLocation">
+              <option *ngFor="let branch of branches " value={{branch.ID}}>
+                {{branch.Code}} - {{branch.Description}}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="control-label">Sign-Up Date</label>
+            <my-date-picker [options]="myDatePickerOptions" [(ngModel)]="signupDate" name='signupDate'
+              (dateChanged)="onSignupDateChange($event)" required></my-date-picker>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-8">
+          <div class="form-group">
+            <label class="control-label">Signed By</label>
+            <ng-select *ngIf="isUserSelectionDropdownVisible" id="ddl_signedUser" [(ngModel)]="selectedSignedUser"
+              name="signedUser" [items]="users" required (selected)="onUserChange($event)">
+            </ng-select>
+            <input type="text" *ngIf="!isUserSelectionDropdownVisible" class="form-control" name="signedByName"
+              maxlength="100" disabled [(ngModel)]="signedByName" />
+          </div>
+        </div>
+        <div class="col-md-4" style="padding-left: 0px;">
+          <br />
+          <br />
+          <span *ngIf="!isUserSelectionDropdownVisible"> <a (click)="allowUserToSelect()">Change</a></span>
+        </div>
+      </div>
+    </modal-body>
+    <modal-footer>
+      <div>
+        <a class="btn btn-default" (click)="addmodal.dismiss()">Cancel</a>
+        <button type="button" (click)="onSubmit();" class="btn btn-primary"
+          [disabled]="!myForm.form.valid">{{modalBtnTitle}}</button>
+      </div>
+    </modal-footer>
+  </form>
+</modal>
+<modal #deletemodal>
+  <modal-header [show-close]="true">
+    <h3 class="modal-title">Delete client</h3>
+  </modal-header>
+  <modal-body>
+
+    Do you want to delete the selected client ?
+  </modal-body>
+  <modal-footer>
+    <div>
+      <a class="btn btn-default" (click)="deletemodal.dismiss()">Cancel</a>
+      <button type="button" (click)="onSubmit();" class="btn btn-primary">Delete</button>
+    </div>
+  </modal-footer>
+
+</modal>
+
+<modal #onAccountModal>
+  <form novalidate #onAccountForm="ngForm">
+    <modal-header [show-close]="true">
+      <h3 class="modal-title">On Account Details</h3>
+    </modal-header>
+    <modal-body>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label class="control-label">Collection Amount</label>
+            <input type="number" class="form-control" name="OnAccountAmount" maxlength="100" required
+              [(ngModel)]="onAccountDetail.OnAccountAmount" />
+          </div>
+          <div class="form-group">
+            <label class="control-label">Collection Date</label>
+            <my-date-picker [(ngModel)]="transactionDate" [options]="myDatePickerOptions" required
+              name='transactionDate' (dateChanged)="onDateChanged($event)"></my-date-picker>
+          </div>
+          <div class="form-group">
+            <label class="control-label">Remarks</label>
+            <textarea type="text" class="form-control" name="AliasName" maxlength="500" rows="3"
+              [(ngModel)]="onAccountDetail.Remarks"></textarea>
+          </div>
+        </div>
+      </div>
+    </modal-body>
+    <modal-footer>
+      <div>
+        <a class="btn btn-default" (click)="onAccountModal.dismiss()">Cancel</a>
+        <button type="button" (click)="submitOnAccountDetails();" class="btn btn-primary"
+          [disabled]="!onAccountForm.form.valid">Save</button>
+      </div>
+    </modal-footer>
+  </form>
+</modal>

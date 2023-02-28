@@ -1,0 +1,90 @@
+<div class="content-wrapper" [ngClass]="{'clientreport': clientreport === true }">
+  <section class="content-header">
+    <h1>
+      {{title}}
+      <small></small>
+    </h1>
+    <!-- <ol class="breadcrumb">
+          <li><a [routerLink]="loggedInUser.IsManager ? '/home/manager-home' : '/home/user-home'"><i class="fa fa-dashboard"></i>Home</a></li>
+          <li class="active"> Score Card</li>
+      </ol> -->
+  </section>
+  <section class="content">
+    <div class="row">
+      <div class="col-md-12">
+        <div *ngIf="msg" role="alert" class="alert alert-info alert-dismissible">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+          <span class="sr-only">Error:</span> {{msg}}
+        </div>
+        <br />
+        <div class="alert alert-info" role="alert" *ngIf="indLoading">
+          <img src="assets/images/loading.gif" width="32" height="32" /> Loading...
+        </div>
+      </div>
+    </div>
+    <div class="row" *ngIf="!clientreport">
+      <div class="col-md-10">
+        <app-report-input [(fromDate)]="fromDate" [(toDate)]="toDate" [(reportType)]="reportType" [(user)]="user">
+        </app-report-input>
+      </div>
+      <div class="col-md-2" style='padding-top: 25px;'>
+        <button type="submit" class="btn btn-primary" (click)="loadResult();" [disabled]="reportType == null">Get
+          Result</button>&nbsp;&nbsp;
+        <button type="submit" [disabled]="_invoiceData == null || _invoiceData.length==0" class="btn btn-success"
+          (click)="getExcel();">Get Excel</button>&nbsp;&nbsp;
+      </div>
+    </div>
+    <div class="row" *ngIf="!clientreport">
+      <div class="col-md-12">
+        <br />
+        <div *ngIf="_invoiceData?.length>0" class="text-muted pull-right"><small><i class="fa fa-rupee"></i> indicates
+            on-account balance</small></div>
+      </div>
+    </div>
+    <div class='row'>
+      <div class='col-md-12'>
+        <div *ngIf="_invoiceData?.length>0">
+          <ag-grid-angular #topGrid id="myGrid" style="width: 100%; height: 450px;" class="ag-theme-balham"
+            [enableSorting]="true" [enableFilter]="true" [enableColResize]="true" [rowData]="_invoiceData"
+            [columnDefs]="columnDefs" (gridReady)="onGridReady($event)" pagination=true rowSelection="single"
+            (cellClicked)='onCellClicked($event)' (filterChanged)='onFilterChange($event)'>
+          </ag-grid-angular>
+        </div>
+        <div [hidden]="footerData==null">
+          <ag-grid-angular style="width: 100%;height: 30px;" #bottomGrid class="ag-theme-balham" [rowData]="footerData"
+            headerHeight="0" [columnDefs]="footercolumnDefs" (gridReady)="onGridReady($event)">
+          </ag-grid-angular>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<modal #onAccountDetailModal>
+  <modal-header [show-close]="true">
+    <h4 class="modal-title">On Account Details</h4>
+  </modal-header>
+  <modal-body>
+    <div class="table-responsive bg-gray no-padding">
+      <table class="table">
+        <tr>
+          <th style="width:40%">Transaction Date:</th>
+          <td>{{trasactionDate}}</td>
+          <hr />
+        </tr>
+        <tr>
+          <th>Collection:</th>
+          <td>{{collectionAmount}}</td>
+          <hr />
+        </tr>
+        <tr>
+          <th>Remarks:</th>
+          <td>{{trasactionRemarks}}</td>
+        </tr>
+      </table>
+    </div>
+  </modal-body>
+</modal>

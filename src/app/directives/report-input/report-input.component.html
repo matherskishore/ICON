@@ -1,0 +1,38 @@
+<div class="row">
+    <div class="col-md-2">
+        <div class="form-group">
+            <label class="control-label">From</label>
+            <my-date-picker [options]="myDatePickerOptions" [selDate]="fromDateObj"
+                (dateChanged)="onFromDateChanged($event)" showClearDateBtn="false"></my-date-picker>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="form-group">
+            <label class="control-label">To</label>
+            <my-date-picker [options]="myDatePickerOptions" [selDate]="toDateObj"
+                (dateChanged)="onToDateChanged($event)"></my-date-picker>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="form-group">
+            <label class="control-label">Type</label>
+            <select class="form-control" name='Role' [(ngModel)]="reportType" name="type"
+                (change)="onTypeChange($event.target.value);"
+                [disabled]="!loggedInUser.IsManager || isAccountsTeamRole">
+                <option value="Self">Unit</option>
+                <!-- <option value="Team">All reportees</option> -->
+                <option value="ReportingMembers">Reporting members</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label class="control-label">Reporting members</label>
+            <ng-select id="ddl_reportingMembers" [(ngModel)]="reportingMembers" name="ReportingMembers"
+                [allowClear]="true" [items]="reportingUsers" (selected)="onUserChange($event)"
+                (removed)="clearUser($event)"
+                [disabled]="isAccountsTeamRole || reportType == 'Self' || reportType==null || reportType=='' || !loggedInUser.IsManager || reportType == 'Team'">
+            </ng-select>
+        </div>
+    </div>
+</div>

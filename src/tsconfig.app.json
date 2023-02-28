@@ -1,0 +1,19 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../out-tsc/app",
+    "module": "es2015",
+    "baseUrl": ".",
+    "paths": { "@angular/*": ["../node_modules/@angular/*"] },
+    "skipLibCheck": true,
+    "types": []
+  },
+  "exclude": [
+    "test.ts",
+    "**/*.spec.ts"
+  ],
+  "include": [
+    "../src/**/*",
+    "../node_modules/angular2-datagrid/index.ts"
+]
+}

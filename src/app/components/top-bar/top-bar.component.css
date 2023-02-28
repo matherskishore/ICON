@@ -1,0 +1,53 @@
+table{
+  border-collapse:collapse;
+  width:100%;
+}
+
+.blue{
+  border:2px solid #428BCA;
+}
+
+.blue thead{
+  background:#428BCA;
+}
+
+thead{
+    
+  color:white;
+}
+
+th,td{
+  text-align:center;
+  padding: 7px;
+}
+
+/*tbody tr:nth-child(even){
+  background:#ECF0F1;
+}*/
+
+
+/*tbody tr:hover{
+background:#BDC3C7;
+  color:#FFFFFF;
+}*/
+
+.fixed{
+  top:0;
+  position:fixed;
+  width:auto;
+  display:none;
+  border:none;
+}
+
+.scrollMore{
+  margin-top:600px;
+}
+
+.up{
+  cursor:pointer;
+}
+
+.disabled {
+    background-color: gray;
+    color:#FFFFFF;
+}

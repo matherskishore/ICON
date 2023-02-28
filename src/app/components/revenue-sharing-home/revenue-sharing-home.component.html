@@ -1,0 +1,119 @@
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>
+      Revenue Sharing
+    </h1>
+    <ol class="breadcrumb">
+      <li class="active"> Home</li>
+    </ol>
+  </section>
+  <!-- Main content -->
+  <section class="content">
+    <div class="row">
+      <div class="col-md-12">
+        <div *ngIf="msg" role="alert" class="alert alert-info alert-dismissible">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+          <span class="sr-only">Error:</span> {{msg}}
+        </div>
+        <br/>
+        <div class="alert alert-info" role="alert" *ngIf="indLoading">
+          <img src="assets/images/loading.gif" width="32" height="32" /> Loading...</div>
+      </div>
+    </div>
+
+    <br/>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="box box-warning">
+          <div class="box-header with-border">
+            <h3 class="box-title">Current Month</h3>
+          </div>
+          <div class="form-horizontal">
+            <div class="box-body">
+              <div class="box-body table-responsive no-padding">
+                <table *ngIf="irfStatus.CurrentMonthData?.length>0" class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th> IRF # </th>
+                      <th> IRF Type </th>
+                      <th> Client Name</th>
+                      <th> Invoice Type </th>
+                      <th> Invoice Amount </th>
+                      <th> Client GST # </th>
+                      <th> Invoice Date </th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of irfStatus.CurrentMonthData;let idx = index;">
+                      <td> {{ item.Id }} </td>
+                      <td> {{ item.IRFType }} </td>
+                      <td> {{ item.ClientName }} </td>
+                      <td> {{ item.InvoiceType }} </td>
+                      <td> {{ item.InvoiceAmout }} </td>
+                      <td> {{ item.ClientGSTNumber }} </td>
+                      <td> {{ item.InvoiceDate | amDateFormat: 'DD-MM-YYYY'}}</td>
+                      <td>
+                        <li style="cursor:pointer" class="fa fa-pencil" aria-hidden="true" (click)="openIRFDetails(item.Id);"></li> &nbsp;&nbsp;&nbsp;&nbsp;
+                        <!-- <li style="cursor:pointer" class="fa fa-trash-o" aria-hidden="true" (click)="deleteClient(client.Id);" ></li> -->
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <br/>
+        <div class="box box-info">
+          <div class="box-header with-border">
+            <h3 class="box-title">Last Month</h3>
+          </div>
+          <div class="form-horizontal">
+            <div class="box-body">
+              <div class="box-body table-responsive no-padding">
+                <table *ngIf="irfStatus.LastMonthData?.length>0" class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th> Invoice # </th>
+                      <th> IRF # </th>
+                      <th> IRF Type </th>
+                      <th> Client Name</th>
+                      <th> Client Type </th>
+                      <th> Invoice Type </th>
+                      <th> Invoice Amount </th>
+                      <th> Client GST # </th>
+                      <th> Invoice Date </th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of irfStatus.LastMonthData;let idx = index;">
+                      <td> {{ item.InvoiceNumber }} </td>
+                      <td> {{ item.Id }} </td>
+                      <td> {{ item.IRFType }} </td>
+                      <td> {{ item.ClientName }} </td>
+                      <td> {{ item.ClienType }} </td>
+                      <td> {{ item.InvoiceType }} </td>
+                      <td> {{ item.InvoiceAmout }} </td>
+                      <td> {{ item.ClientGSTNumber }} </td>
+                      <td> {{ item.InvoiceDate | amDateFormat: 'DD-MM-YYYY'}}</td>
+                      <td>
+                        <li style="cursor:pointer" class="fa fa-pencil" aria-hidden="true" (click)="openIRFDetails(item.Id);"></li> &nbsp;&nbsp;&nbsp;&nbsp;
+                        <!-- <li style="cursor:pointer" class="fa fa-trash-o" aria-hidden="true" (click)="deleteClient(client.Id);" ></li> -->
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

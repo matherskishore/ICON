@@ -1,0 +1,127 @@
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>
+      Attach Credit Note Document
+    </h1>
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="row">
+      <div class="col-md-12">
+        <div *ngIf="msg" role="alert" class="alert alert-info alert-dismissible">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+          <span class="sr-only">Error:</span> {{msg}}
+        </div>
+        <br />
+        <div class="alert alert-info" role="alert" *ngIf="indLoading">
+          <img src="assets/images/loading.gif" width="32" height="32" /> Loading...</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3">
+        <div class="form-group">
+          <input type="file" class="btn btn-primary" ng2FileSelect [uploader]="uploader" multiple />
+        </div>
+        <div class="form-group">
+          <div ng2FileDrop [ngClass]="{'another-file-over-class': hasAnotherDropZoneOver}" (fileOver)="fileOverAnother($event)"
+            [uploader]="uploader" class="well my-drop-zone">
+            Drop your files here
+          </div>
+        </div>
+        <div class="form-group" *ngIf="uploader.queue?.length>0">
+          <button type="button" class="btn btn-success btn-s" (click)="uploader.uploadAll();" [disabled]="!uploader.getNotUploadedItems().length || uploader.queue.length>50">
+            <span class="glyphicon glyphicon-upload"></span> Upload
+          </button>
+          <button type="button" class="btn btn-warning btn-s" (click)="uploader.cancelAll();clearData();" [disabled]="!uploader.isUploading">
+            <span class="glyphicon glyphicon-ban-circle"></span> Cancel all
+          </button>
+          <button type="button" class="btn btn-danger btn-s" (click)="uploader.clearQueue();clearData();" [disabled]="!uploader.queue.length">
+            <span class="glyphicon glyphicon-trash"></span> Remove all
+          </button>
+        </div>
+      </div>
+      <div class="col-md-9">
+        <div class='scrollit'>
+          <div class="box box-primary" *ngIf="uploader.queue?.length>0">
+            <div class="box-body table-responsive no-padding">
+              <table id="tblClients" class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Size</th>
+                    <th>Progress</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of uploader.queue">
+                    <td>
+                      <strong>{{ item?.file?.name }}</strong>
+                    </td>
+                    <td nowrap>{{ item?.file?.size/1024/1024 | number:'.2' }} MB</td>
+                    <td>
+                      <div class="progress" style="margin-bottom: 0;">
+                        <div class="progress-bar" role="progressbar" [ngStyle]="{ 'width': item.progress + '%' }"></div>
+                      </div>
+                    </td>
+                    <td class="text-center">
+                      <span *ngIf="item.isSuccess">
+                        <i class="glyphicon glyphicon-ok"></i>
+                      </span>
+                      <span *ngIf="item.isCancel">
+                        <i class="glyphicon glyphicon-ban-circle"></i>
+                      </span>
+                      <span *ngIf="item.isError">
+                        <i class="glyphicon glyphicon-remove"></i>
+                      </span>
+                    </td>
+                    <td>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row" *ngIf="invoiceGridData?.length>0">
+      <div class="col-md-12">
+        <div class="pull-right">
+          <button type="button" (click)="attachInvoice.open();" [disabled]='indLoading' class="btn-xs btn-info ">Attach
+            Document</button>
+        </div>
+      </div>
+    </div>
+    <div class='row'>
+      <div class='col-md-12'>
+        <div *ngIf="invoiceGridData?.length>0">
+          <ag-grid-angular #agGrid id="myGrid" style="width: 100%; height: 500px;" class="ag-theme-balham"
+            [enableSorting]="true" [enableFilter]="true" [enableColResize]="true" [rowData]="invoiceGridData"
+            [columnDefs]="columnDefs" (gridReady)="onGridReady($event)" pagination='false' rowSelection="multiple">
+          </ag-grid-angular>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</div>
+<modal #attachInvoice>
+  <modal-header [show-close]="true">
+    <h3 class="modal-title">Attach document</h3>
+  </modal-header>
+  <modal-body>
+    Do you want to attach the documents to selected Credit Notes?
+  </modal-body>
+  <modal-footer>
+    <div>
+      <a class="btn btn-default" (click)="attachInvoice.dismiss()">Cancel</a>
+      <button type="button" (click)="attachToInvoice();" [disabled]='indLoading' class="btn btn-primary">Yes</button>
+    </div>
+  </modal-footer>
+</modal>

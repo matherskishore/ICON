@@ -1,0 +1,145 @@
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>
+
+      <span *ngIf="clientName!=''"> {{clientName}} - </span>Locations
+    </h1>
+    <ol class="breadcrumb">
+      <li>
+        <a routerLink='/home/clients'>
+          <i class="fa fa-dashboard"></i>Client</a>
+      </li>
+      <li class="active"> Location</li>
+    </ol>
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="row">
+      <div class="col-md-12">
+        <div *ngIf="msg" role="alert" class="alert alert-info alert-dismissible">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+          <span class="sr-only">Error:</span> {{msg}}
+        </div>
+        <br />
+        <div class="alert alert-info" role="alert" *ngIf="indLoading">
+          <img src="assets/images/loading.gif" width="32" height="32" /> Loading...</div>
+        <div>
+          <button type="button" class="btn btn-primary pull-left" (click)="addLocation();">Add Location</button>
+          <br />
+          <br />
+        </div>
+        <div *ngIf="_locations?.length>0" class="row">
+          <div class="col-md-12">
+            <div class="pull-right">
+              <button type="button" (click)="editLocation();" class="btn-xs btn-info ">Edit</button>
+              <button type="button" (click)="deleteLocation()" [disabled]='indLoading' class="btn-xs btn-danger ">Delete</button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="_locations?.length>0">
+          <ag-grid-angular #agGrid id="myGrid" style="width: 100%; height: 600px;" class="ag-theme-balham"
+            [enableSorting]="true" [enableFilter]="true" [enableColResize]="true" [rowData]="_locations" [columnDefs]="columnDefs"
+            (gridReady)="onGridReady($event)" pagination=true rowSelection="single" (cellClicked)='onCellClicked($event)'>
+          </ag-grid-angular>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<modal #addmodal>
+  <form novalidate #myForm="ngForm">
+    <modal-header [show-close]="true">
+      <h3 class="modal-title">{{modalTitle}}</h3>
+    </modal-header>
+    <modal-body>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label class="control-label">Code</label>
+            <input type="text" class="form-control" name="Code" maxlength="100" required [(ngModel)]="_location.LocationCode" />
+          </div>
+          <div class="form-group">
+            <label class="control-label">Name</label>
+            <input type="text" class="form-control" name="Name" maxlength="100" required [(ngModel)]="_location.LocationName" />
+          </div>
+          <div class="form-group ">
+            <label class="control-label ">Invoice Centre</label>
+            <select class="form-control" name='InvoicingCentreID' required [(ngModel)]="_location.InvoiceCentreId"
+              (change)="updateLocationCode();">
+              <option *ngFor="let branch of branches " value={{branch.ID}}>
+                {{branch.Code}} - {{branch.Description}}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="control-label">SPOC Name</label>
+            <input type="text" class="form-control" name="SpocName" maxlength="100" required [(ngModel)]="_location.LocationSPOC_Name" />
+          </div>
+          <div class="form-group">
+            <label class="control-label">Email</label>
+            <input type="email" class="form-control" name="SPOC_Email" maxlength="100" required [(ngModel)]="_location.SPOC_Email"
+              pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" />
+          </div>
+          <div class="form-group">
+            <label class="control-label">Contact #</label>
+            <input type="email" class="form-control" name="SPOC_ContactNumber" maxlength="50" required [(ngModel)]="_location.SPOC_ContactNumber" />
+          </div>
+          <div class="form-group">
+            <label class="control-label">Billing Address</label>
+            <textarea type="text" class="form-control" maxlength="5000" rows="5" [(ngModel)]="_location.BillingAddress"
+              name='BillingAddress'></textarea>
+          </div>
+          <div class="form-group">
+            <br />
+            <input type="checkbox" class="checkbox-primary" name="copyAddress" [(ngModel)]="copyAddress" (change)="copyShippingAddress();">&nbsp;&nbsp;
+            <label class="control-label">Copy Billing Address </label>
+          </div>
+          <div class="form-group">
+            <label class="control-label">Shipping Address</label>
+            <textarea type="text" class="form-control" maxlength="5000" rows="5" [(ngModel)]="_location.ShippingAddress"
+              name='ShippingAddress'></textarea>
+          </div>
+          <div class="form-group">
+            <label class="control-label">GST #</label>
+            <input type="text" class="form-control" name="GST_Number" maxlength="100" required [(ngModel)]="_location.GST_Number" />
+          </div>
+          <div class="form-group">
+            <label class="control-label">Status</label>
+            <select class="form-control" name='Status' required [(ngModel)]="_location.Status">
+              <option value="0"> Inactive </option>
+              <option value="1"> Active </option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </modal-body>
+    <modal-footer>
+      <div>
+        <a class="btn btn-default" (click)="addmodal.dismiss()">Cancel</a>
+        <button type="button" (click)="onSubmit();" class="btn btn-primary" [disabled]="!myForm.form.valid">{{modalBtnTitle}}</button>
+      </div>
+    </modal-footer>
+  </form>
+</modal>
+<modal #deletemodal>
+  <modal-header [show-close]="true">
+    <h3 class="modal-title">Delete location</h3>
+  </modal-header>
+  <modal-body>
+
+    Do you want to delete the selected location ?
+  </modal-body>
+  <modal-footer>
+    <div>
+      <a class="btn btn-default" (click)="deletemodal.dismiss()">Cancel</a>
+      <button type="button" (click)="onSubmit();" class="btn btn-primary">Delete</button>
+    </div>
+  </modal-footer>
+
+</modal>

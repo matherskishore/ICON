@@ -1,0 +1,45 @@
+import { IRFCandidate } from './IRFCandidate';
+import { IRFAttachment } from './IRFAttachment';
+import { IRFRevenueSharing } from './IRFRevenueSharing';
+
+export class IRFDetail {
+  Id: number;
+  IRF_Type: string;
+  IRFSubType: string;
+  ConsultantID: number;
+  ReportingManagerID: number;
+  InvoiceType: string;
+  CurrencyDetails: string;
+  InvoiceAmount: number;
+  InvoiceNarration: string;
+  InvoicingCentreID: number;
+  GrossProfit: number;
+  ClientType: string;
+  ClientID: number;
+  ContractCode: string;
+  CommercialDetails: string;
+  PO_Number: string;
+  ClientLocationID: number;
+  ClientSPOC_Name: string;
+  ClientMailID: string;
+  ClientGST_Number: string;
+  InvoiceBillingAddress: string;
+  InvoiceShippingAddress: string;
+  CreditPeriod: number;
+  AdvanceAdjustment: number;
+  Comments: string;
+  Status: number;
+  LastUpdatedOn: Date;
+  LastUpdatedBy: number;
+  ApproverRemarks: string;
+  ApprovedOn: Date;
+  ApprovedOnStr: string;
+  ApprovedBy: number;
+  Candidates: Array<IRFCandidate>;
+  Attachments: Array<IRFAttachment>;
+  RevenueSharing: Array<IRFRevenueSharing>;
+  ConsultantName: string;
+  ManagerName: string;
+  ReviseRemarks: string;
+  ClientContactNumber: string;
+}

@@ -1,0 +1,80 @@
+import { Routes } from '@angular/router';
+import { LoginComponent } from './components/login/login.component';
+import { HomeComponent } from './components/home/home.component';
+import { ConsultantHomeComponent } from './components/consultant-home/consultant-home.component';
+import { ClientMasterComponent } from './components/client-master/client-master.component';
+import { LocaionMasterComponent } from './components/location-master/location-master.component';
+import { SubmitIrfComponent } from './components/submit-irf/submit-irf.component';
+import { FileUploadComponent } from './components/file-upload/file-upload.component';
+import { IrfHomeComponent } from './components/irf-home/irf-home.component';
+import { IrfReviewerHomeComponent } from './components/irf-reviewer-home/irf-reviewer-home.component';
+import { InvoiceImportComponent } from './components/invoice-import/invoice-import.component';
+import { InvoiceViewComponent } from './components/invoice-view/invoice-view.component';
+import { RevenueSharingHomeComponent } from './components/revenue-sharing-home/revenue-sharing-home.component';
+import { ClaimSheetReportComponent } from './components/claim-sheet-report/claim-sheet-report.component';
+import { InvoiceReportComponent } from './components/invoice-report/invoice-report.component';
+import { MgmtHomeComponent } from './components/mgmt-home/mgmt-home.component';
+import { RaiseCreditNoteComponent } from './components/raise-credit-note/raise-credit-note.component';
+import { CreditNoteSummaryComponent } from './components/credit-note-summary/credit-note-summary.component';
+import { CreditNoteReviewComponent } from './components/credit-note-review/credit-note-review.component';
+import { SuspenseAccountComponent } from './components/suspense-account/suspense-account.component';
+import { SuspenseAccountSummaryComponent } from './components/suspense-account-summary/suspense-account-summary.component';
+// tslint:disable-next-line:max-line-length
+import { SuspenseAccountReviewSummaryComponent } from './components/suspense-account-review-summary/suspense-account-review-summary.component';
+import { DisapatchEntryComponent } from './components/disapatch-entry/disapatch-entry.component';
+import { DisapatchHistoryComponent } from './components/disapatch-history/disapatch-history.component';
+import { PublishIrfComponent } from './components/publish-irf/publish-irf.component';
+import { IrfIntegrationStatusComponent } from './components/irf-integration-status/irf-integration-status.component';
+import { ImportProcessedInvoiceComponent } from './components/import-processed-invoice/import-processed-invoice.component';
+import { InvoiceUploadComponent } from './components/invoice-upload/invoice-upload.component';
+import { ClientSearchComponent } from './components/client-search/client-search.component';
+import { CreditNoteReportComponent } from './components/credit-note-report/credit-note-report.component';
+import { CreditNoteUploadComponent } from './components/credit-note-upload/credit-note-upload.component';
+import { PayoutRequestComponent1 } from './components/payout-request-r/payout-request-r.component';
+import { PayoutRequestComponent } from './components/payout-request-c/payout-request-c.component';
+import { PayoutRequestComponent2 } from './components/payout-request-a/payout-request-a.component';
+import { ImportProcessedCreditNoteComponent } from './components/import-processed-credit-note/import-processed-credit-note.component';
+import { SubmitCSRComponent } from './components/submit-csr/submit-csr.component';
+
+export const AppRoute: Routes = [
+  { path: '', component: LoginComponent },
+  { path: 'login', component: LoginComponent },
+  {
+    path: 'home', component: HomeComponent, children: [
+      { path: 'con-home', component: ConsultantHomeComponent },
+      { path: 'clients', component: ClientMasterComponent },
+      { path: 'locations', component: LocaionMasterComponent },
+      { path: 'submit-irf', component: SubmitIrfComponent, },
+      { path: 'upload', component: FileUploadComponent, },
+      { path: 'irf-consultant-home', component: IrfHomeComponent, },
+      { path: 'irf-reviewer-home', component: IrfReviewerHomeComponent, },
+      { path: 'import-data', component: InvoiceImportComponent, },
+      { path: 'invoice-view', component: InvoiceViewComponent, },
+      { path: 'revenue-sharing', component: RevenueSharingHomeComponent, },
+      { path: 'claim-sheet', component: ClaimSheetReportComponent, },
+      { path: 'invoice-report', component: InvoiceReportComponent, },
+      { path: 'credit-note-report', component: CreditNoteReportComponent, },
+      { path: 'mgmt-home', component: MgmtHomeComponent, },
+      { path: 'raise-credit-note', component: RaiseCreditNoteComponent, },
+      { path: 'credit-note-summary', component: CreditNoteSummaryComponent, },
+      { path: 'credit-note-review', component: CreditNoteReviewComponent, },
+      { path: 'suspense-account', component: SuspenseAccountComponent, },
+      { path: 'suspense-account-summary', component: SuspenseAccountSummaryComponent, },
+      { path: 'suspense-account-review', component: SuspenseAccountReviewSummaryComponent, },
+      { path: 'dispatch-detail', component: DisapatchEntryComponent, },
+      { path: 'dispatch-history', component: DisapatchHistoryComponent, },
+      { path: 'publish-irf', component: PublishIrfComponent, },
+      { path: 'irf-invoice-status', component: IrfIntegrationStatusComponent, },
+      { path: 'import-invoice', component: ImportProcessedInvoiceComponent, },
+      { path: 'upload-invoice', component: InvoiceUploadComponent, },
+      { path: 'upload-credit-note', component: CreditNoteUploadComponent, },
+      { path: 'payout-request-a', component: PayoutRequestComponent2, },
+      { path: 'payout-request-r', component: PayoutRequestComponent1, },
+      { path: 'payout-request-c', component: PayoutRequestComponent, },
+      { path: 'client-search', component: ClientSearchComponent, },
+      { path: 'import-processed-credit-note', component: ImportProcessedCreditNoteComponent, },
+      { path: 'submit-csr', component: SubmitCSRComponent }
+    ]
+  },
+];
+

@@ -1,0 +1,227 @@
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>
+      Payout Requests
+    </h1>
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="row">
+      <div class="col-md-12">
+        <div *ngIf="msg" role="alert" class="alert alert-info alert-dismissible">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+          <span class="sr-only">Error:</span> {{msg}}
+        </div>
+        <br />
+        <div class="alert alert-info" role="alert" *ngIf="indLoading">
+          <img src="assets/images/loading.gif" width="32" height="32" /> Loading...
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-2">
+        <div class="form-group">
+          <label class="control-label">From</label>
+          <my-date-picker [options]="myDatePickerOptions" [(ngModel)]="fromDateCtrl" name='fromDate'
+            (dateChanged)="onFromDateChanged($event)"></my-date-picker>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group">
+          <label class="control-label">To</label>
+          <my-date-picker [options]="myDatePickerOptions" [(ngModel)]="toDateCtrl" name='toDate'
+            (dateChanged)="onToDateChanged($event)"></my-date-picker>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <br>
+        <button type="button" (click)="getResult();" class="btn btn-primary" [disabled]="fromDate=='' || toDate==''">Get
+          Result</button>&nbsp;&nbsp;
+      </div>
+      <div class="col-md-2">
+      </div>
+    </div>
+    <div class="row" *ngIf="errorMessage!=''">
+      <div class="col-md-12">
+        <div class="alert alert-info alert-dismissible">
+          <h4>
+            <i class="icon fa fa-info"></i> {{errorMessage}}
+          </h4>
+        </div>
+      </div>
+    </div>
+    <div class='row'>
+      <div class='col-md-12'>
+        <div class="box box-info">
+          <div class="box-header with-border">
+            <h3 class="box-title">Claim Sheets</h3>
+          </div>
+          <div class="form-horizontal">
+            <div class="box-body">
+              <div class="box-body table-responsive no-padding">
+                <div *ngIf="claimSheets?.length>0" class="row">
+                  <div class="col-md-12">
+                    <div class="pull-right">
+                      <button class="btn btn-primary" (click)="openCSRModal();"
+                      [disabled]="indLoading">Create Request</button>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="claimSheets?.length>0">
+                  <ag-grid-angular #agGrid id="myGrid" style="width: 100%; height: 600px;" class="ag-theme-balham"
+                    [enableSorting]="true" [enableFilter]="true" [enableColResize]="true" [rowData]="claimSheets"
+                    [columnDefs]="columnDefs" (gridReady)="onGridReadySub($event)" pagination=true rowSelection="multiple"
+                    [enableColResize]="true" (cellClicked)='onCellClicked($event)'
+                    (filterChanged)='onFilterChange($event)'>
+                  </ag-grid-angular>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class='row'>
+      <div class='col-md-12'>
+        <div class="box box-info">
+          <div class="box-header with-border">
+            <h3 class="box-title">Claim Requests To Be Submitted</h3>
+          </div>
+          <div class="form-horizontal">
+            <div class="box-body">
+              <div class="box-body table-responsive no-padding">
+                <div *ngIf="_claimSheets.ToBeSubmitted?.length>0" class="row">
+                  <div class="col-md-12">
+                    <div class="pull-right">
+                      <button type="button" (click)="openSubmitConfirm();" [disabled]='indLoading'
+                        class="btn-xs btn-success">Submit Claim</button>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="_claimSheets.ToBeSubmitted?.length>0">
+                  <ag-grid-angular #agGrid id="myGrid" style="width: 100%; height: 600px;" class="ag-theme-balham"
+                    [enableSorting]="true" [enableFilter]="true" [enableColResize]="true"
+                    [rowData]="_claimSheets.ToBeSubmitted" [columnDefs]="columnDefsNew"
+                    (gridReady)="onGridReadyNew($event)" pagination=true rowSelection="multiple" [enableColResize]="true"
+                    (cellClicked)='onCellClicked($event)' (filterChanged)='onFilterChange($event)'>
+                  </ag-grid-angular>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class='row'>
+      <div class='col-md-12'>
+        <div class="box box-info">
+          <div class="box-header with-border">
+            <h3 class="box-title">Submitted Claim Requests</h3>
+          </div>
+          <div class="form-horizontal">
+            <div class="box-body">
+              <div class="box-body table-responsive no-padding">
+                <div *ngIf="_claimSheets.Submitted?.length>0" class="row">
+                  <div class="col-md-12">
+                    <div class="pull-right">
+                      <button type="button" class="btn-xs btn-danger" (click)="openWithdrawClaim();">Withdraw</button>
+                      <button class="btn-xs btn-primary" (click)="getExcel1();">Get Excel</button>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="_claimSheets.Submitted?.length>0">
+                  <ag-grid-angular #agGrid id="myGrid" style="width: 100%; height: 600px;" class="ag-theme-balham"
+                    [enableSorting]="true" [enableFilter]="true" [enableColResize]="true"
+                    [rowData]="_claimSheets.Submitted" [columnDefs]="columnDefsProcess"
+                    (gridReady)="onGridReadyProcess($event)" pagination=true rowSelection="multiple" [enableColResize]="true"
+                    (cellClicked)='onCellClicked($event)' (filterChanged)='onFilterChange($event)'>
+                  </ag-grid-angular>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class='row'>
+      <div class='col-md-12'>
+        <div class="box box-info">
+          <div class="box-header with-border">
+            <h3 class="box-title">Approved or Paid Claim Requests</h3>
+          </div>
+          <div class="form-horizontal">
+            <div class="box-body">
+              <div class="box-body table-responsive no-padding">
+                <div *ngIf="_claimSheets.ProcessedUnpaid?.length>0" class="row">
+                  <div class="col-md-12">
+                    <div class="pull-right">
+                      <button class="btn-xs btn-primary" (click)="getExcel2();">Get Excel</button>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="_claimSheets.ProcessedUnpaid?.length>0">
+                  <ag-grid-angular #agGrid id="myGrid" style="width: 100%; height: 600px;" class="ag-theme-balham"
+                    [enableSorting]="true" [enableFilter]="true" [enableColResize]="true"
+                    [rowData]="_claimSheets.ProcessedUnpaid" [columnDefs]="columnDefsPaid"
+                    (gridReady)="onGridReadyPaid($event)" pagination=true rowSelection="multiple" [enableColResize]="true"
+                    (cellClicked)='onCellClicked($event)' (filterChanged)='onFilterChange($event)'>
+                  </ag-grid-angular>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<modal #withdrawClaim>
+  <modal-header [show-close]="true">
+    <h3 class="modal-title">Withdraw Payout Requests</h3>
+  </modal-header>
+  <modal-body>
+    Do you want to withdraw the submitted Payout Request(s)?
+  </modal-body>
+  <modal-footer>
+    <div>
+      <a class="btn btn-danger" (click)="withdrawClaim.dismiss()">Cancel</a>
+      <button type="button" (click)="wdClaim();;" class="btn btn-success">Yes</button>
+    </div>
+  </modal-footer>
+</modal>
+
+<modal #submitClaim>
+  <modal-header [show-close]="true">
+    <h3 class="modal-title">Submit Payout Requests</h3>
+  </modal-header>
+  <modal-body>
+    Do you want to submit the selected Payout Request(s)?
+  </modal-body>
+  <modal-footer>
+    <div>
+      <a class="btn btn-danger" (click)="submitClaim.dismiss()">Cancel</a>
+      <button type="button" (click)="subClaim();;" [disabled]='indLoading' class="btn btn-success">Yes</button>
+    </div>
+  </modal-footer>
+</modal>
+
+<modal #createClaim>
+  <modal-header [show-close]="true">
+    <h3 class="modal-title">Create Payout Requests</h3>
+  </modal-header>
+  <modal-body>
+    Do you wish to create a Payout Request?
+  </modal-body>
+  <modal-footer>
+    <div>
+      <a class="btn btn-danger" (click)="createClaim.dismiss()">Cancel</a>
+      <button type="button" (click)="createPayoutRequest();;" [disabled]='indLoading' class="btn btn-success">Yes</button>
+    </div>
+  </modal-footer>
+</modal>

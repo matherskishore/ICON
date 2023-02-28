@@ -1,0 +1,65 @@
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>
+      IRF Integration Status
+    </h1>
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="row">
+      <div class="col-md-12">
+        <div *ngIf="msg" role="alert" class="alert alert-info alert-dismissible">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+          <span class="sr-only">Error:</span> {{msg}}
+        </div>
+        <br/>
+        <div class="alert alert-info" role="alert" *ngIf="indLoading">
+          <img src="assets/images/loading.gif" width="32" height="32" /> Loading...</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-2">
+        <div class="form-group">
+          <label class="control-label">From</label>
+          <my-date-picker [options]="myDatePickerOptions" [(ngModel)]="fromDateCtrl" name='fromDate' (dateChanged)="onFromDateChanged($event)"></my-date-picker>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group">
+          <label class="control-label">To</label>
+          <my-date-picker [options]="myDatePickerOptions" [(ngModel)]="toDateCtrl" name='toDate' (dateChanged)="onToDateChanged($event)"></my-date-picker>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <br>
+        <button type="button" (click)="getResult();" class="btn btn-primary" [disabled]="fromDate=='' || toDate=='' || indLoading">Get Result</button>&nbsp;&nbsp;
+      </div>
+      <div class="col-md-2">
+      </div>
+    </div>
+    <div class="row" *ngIf="errorMessage!=''">
+      <div class="col-md-12">
+        <div class="alert alert-info alert-dismissible">
+          <h4>
+            <i class="icon fa fa-info"></i> {{errorMessage}}</h4>
+        </div>
+      </div>
+    </div>
+    <div class='row'>
+      <div class='col-md-12'>
+        <div *ngIf="_irfs?.length>0">
+          <ag-grid-angular #agGrid id="myGrid" style="width: 100%; height: 600px;" class="ag-theme-balham" [enableSorting]="true" [enableFilter]="true"
+            [enableColResize]="true" [rowData]="_irfs" [columnDefs]="columnDefs" (gridReady)="onGridReady($event)" pagination=true
+            rowSelection="multiple" (cellClicked)='onCellClicked($event)'>
+          </ag-grid-angular>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</div>

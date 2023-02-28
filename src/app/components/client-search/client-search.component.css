@@ -1,0 +1,27 @@
+.divFullPage {
+  width: 100vw;
+  height: 100vh;
+  background: red;
+}
+
+#expand.fullscreen {
+  z-index: 9999;
+  width: 98%;
+  height: 96%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #ECF0F5;
+  box-shadow: 0 1px 2px 0 rgb(26, 26, 26, 0.4);
+  margin: 15px;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+.separator {
+  width: 1px;
+  background-color: #ffffff;
+  height: 23px;
+  margin: 3px;
+  border-right: solid 1px #cfcfcf;
+}

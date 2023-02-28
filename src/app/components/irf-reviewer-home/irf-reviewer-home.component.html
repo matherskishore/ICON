@@ -1,0 +1,130 @@
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>
+      Invoice Requests
+    </h1>
+    <ol class="breadcrumb">
+      <li class="active"> Home</li>
+    </ol>
+  </section>
+  <section class="content">
+    <div class="row">
+      <div class="col-md-12">
+        <div *ngIf="msg" role="alert" class="alert alert-info alert-dismissible">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+          <span class="sr-only">Error:</span> {{msg}}
+        </div>
+        <br />
+        <div class="alert alert-info" role="alert" *ngIf="indLoading">
+          <img alt src="assets/images/loading.gif" width="32" height="32" /> Loading...
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="box box-info">
+          <div class="box-header with-border">
+            <h3 class="box-title">Pending for Approval</h3>
+          </div>
+          <div class="form-horizontal">
+            <div class="box-body">
+              <div class="box-body table-responsive no-padding">
+                <div *ngIf="irfStatus.ToBeApproved?.length>0">
+                  <ag-grid-angular #agGrid id="myGridToBeApproved" style="width: 100%; height: 250px;"
+                    class="ag-theme-balham" [enableSorting]="true" [enableFilter]="true" [enableColResize]="true"
+                    [rowData]="irfStatus.ToBeApproved" [columnDefs]="columnDefsToBeApproved"
+                    (gridReady)="onGridReadyToBeApproved($event)" pagination=true rowSelection="multiple"
+                    (cellClicked)='onCellClicked($event)'>
+                  </ag-grid-angular>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <br />
+        <div class="box box-primary">
+          <div class="box-header with-border">
+            <h3 class="box-title">Approved and To Be Published</h3>
+          </div>
+          <div class="form-horizontal">
+            <div class="box-body">
+              <div class="box-body table-responsive no-padding">
+                <div *ngIf="irfStatus.ApprovedToBeIntegrated?.length>0" class="row">
+                  <div class="col-md-12">
+                    <div class="pull-right">
+                      <button type="button" (click)="openRevokePopup();" class="btn-xs btn-warning ">Revoke</button>
+                      <button type="button" (click)="publishIRF.open();" [disabled]='indLoading'
+                        class="btn-xs btn-info ">Publish</button>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="irfStatus.ApprovedToBeIntegrated?.length>0">
+                  <ag-grid-angular #agGrid id="myGrid" style="width: 100%; height: 250px;" class="ag-theme-balham"
+                    [enableSorting]="true" [enableFilter]="true" [enableColResize]="true"
+                    [rowData]="irfStatus.ApprovedToBeIntegrated" [columnDefs]="columnDefs"
+                    (gridReady)="onGridReadyToBeIntegrated($event)" pagination=true rowSelection="multiple"
+                    (cellClicked)='onCellClicked($event)'>
+                  </ag-grid-angular>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="box box-success">
+          <div class="box-header with-border">
+            <h3 class="box-title">Published and To Be Invoiced</h3>
+          </div>
+          <div class="form-horizontal">
+            <div class="box-body">
+              <div class="box-body table-responsive no-padding">
+                <div *ngIf="irfStatus.IntegratedAndTobeInvoiced?.length>0">
+                  <ag-grid-angular #agGrid id="myGrid" style="width: 100%; height: 250px;" class="ag-theme-balham"
+                    [enableSorting]="true" [enableFilter]="true" [enableColResize]="true"
+                    [rowData]="irfStatus.IntegratedAndTobeInvoiced" [columnDefs]="columnDefsToBeInvoiced"
+                    (gridReady)="onGridReadyToBeInvoiced($event)" pagination=true rowSelection="multiple"
+                    (cellClicked)='onCellClicked($event)'>
+                  </ag-grid-angular>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+<modal #revokeIRF>
+  <modal-header [show-close]="true">
+    <h3 class="modal-title">Revoke IRF</h3>
+  </modal-header>
+  <modal-body>
+    Do you want to revoke the approved IRF?
+    <br />
+    <br /> Note : This will be moved to
+    <b>Pending for Approval</b> queue.
+  </modal-body>
+  <modal-footer>
+    <div>
+      <a class="btn btn-default" (click)="revokeIRF.dismiss()">Cancel</a>
+      <button type="button" (click)="resetIRF();;" class="btn btn-primary">Yes</button>
+    </div>
+  </modal-footer>
+</modal>
+<modal #publishIRF>
+  <modal-header [show-close]="true">
+    <h3 class="modal-title">Publish IRF</h3>
+  </modal-header>
+  <modal-body>
+    Do you want to publish the selected IRFs for Invoice generation?
+  </modal-body>
+  <modal-footer>
+    <div>
+      <a class="btn btn-default" (click)="publishIRF.dismiss()">Cancel</a>
+      <button type="button" (click)="publish();;" [disabled]='indLoading' class="btn btn-primary">Yes</button>
+    </div>
+  </modal-footer>
+</modal>

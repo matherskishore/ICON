@@ -1,0 +1,85 @@
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>
+      Payout Requests
+    </h1>
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="row">
+      <div class="col-md-12">
+        <div *ngIf="msg" role="alert" class="alert alert-info alert-dismissible">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+          <span class="sr-only">Error:</span> {{msg}}
+        </div>
+        <br />
+        <div class="alert alert-info" role="alert" *ngIf="indLoading">
+          <img src="assets/images/loading.gif" width="32" height="32" /> Loading...
+        </div>
+      </div>
+    </div>
+    <br />
+    <div class="row">
+      <div class="col-md-12">
+        <div class="box box-warning">
+          <div class="box-header with-border">
+            <h3 class="box-title">Claim Requests To Be Reviewed</h3>
+            <div class="pull-right" *ngIf="_claimSheets.ToBeApproved?.length>0">
+              <button class="btn-xs btn-success" (click)="openApproveClaim();">Process</button>
+              <button class="btn-xs btn-danger" (click)="openRejectClaim();">Reject</button>
+            </div>
+          </div>
+          <div class="form-horizontal">
+            <div class="box-body">
+              <div class="box-body table-responsive no-padding">
+                <div *ngIf="_claimSheets.ToBeApproved?.length>0">
+                  <ag-grid-angular #agGrid id="myGrid" style="width: 100%; height: 600px;" class="ag-theme-balham"
+                    [enableSorting]="true" [enableFilter]="true" [enableColResize]="true"
+                    [rowData]="_claimSheets.ToBeApproved" [columnDefs]="columnDefs" (gridReady)="onGridReady($event)"
+                    pagination=true rowSelection="multiple" [enableColResize]="true"
+                    (cellClicked)='onCellClicked($event)' (filterChanged)='onFilterChange($event)'>
+                  </ag-grid-angular>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<modal #publishClaim>
+  <modal-header [show-close]="true">
+    <h3 class="modal-title">Process Payout Request(s)</h3>
+  </modal-header>
+  <modal-body>
+    Do you wish to process the selected Payout Request(s)?
+  </modal-body>
+  <modal-footer>
+    <div>
+      <a class="btn btn-danger" (click)="publishClaim.dismiss()">Cancel</a>
+      <button type="button" (click)="approveClaim();;" [disabled]='indLoading' class="btn btn-success">Yes</button>
+    </div>
+  </modal-footer>
+</modal>
+
+<modal #rejectClaim>
+  <modal-header [show-close]="true">
+    <h3 class="modal-title">Reject Payout Request(s)</h3>
+  </modal-header>
+  <modal-body>
+    Do you wish to reject the selected Payout Request(s)?
+  </modal-body>
+  <modal-footer>
+    <div>
+      <a class="btn btn-danger" (click)="rejectClaim.dismiss()">Cancel</a>
+      <button type="button" (click)="rejClaim();;" class="btn btn-success">Yes</button>
+    </div>
+  </modal-footer>
+</modal>

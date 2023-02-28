@@ -1,0 +1,86 @@
+/* You can add global styles to this file, and also import other style files */
+
+/*@import url('assets/css/bootstrap.min.css');
+@import url('assets/css/sb-admin.css');
+@import url('assets/font-awesome/css/font-awesome.min.css');
+@import url('assets/css/bootstrap-select.min.css');*/
+
+@import url('assets/bootstrap/css/bootstrap.min.css');
+@import url('assets/font-awesome/css/font-awesome.min.css');
+@import url('assets/plugins/datatables/dataTables.bootstrap.css');
+
+@import "~ag-grid/dist/styles/ag-grid.css";
+@import "~ag-grid/dist/styles/ag-theme-balham.css";
+/*@import url('assets/dist/css/ionicons.min.css');*/
+
+/* @import url('../node_modules/ionicons/dist/css/ionicons.min.css'); */
+
+/*@import url('../node_modules/jvectormap/jquery-jvectormap-1.2.2.css');*/
+
+@import url('assets/dist/css/AdminLTE.min.css');
+@import url('assets/dist/css/AdminLTE.min.css');
+@import url('assets/dist/css/AdminLTE.min.css');
+@import url('assets/dist/css/skins/_all-skins.min.css');
+@import url('assets/plugins/iCheck/square/blue.css');
+/* @import "~@ng-select/ng-select/themes/default.theme.css"; */
+
+.ng-valid[required],
+.ng-valid.required {
+  border-left: 5px solid #42A948;
+  border-radius: 0;
+}
+
+.ng-invalid:not(form) {
+  border-left: 5px solid #a94442;
+  border-radius: 0;
+}
+
+.TextBoxAsLabel {
+  border: none;
+  background-color: #FFFFFF;
+  background: transparent;
+  width: 100%;
+  font-weight: 100;
+}
+
+#footer.stikybottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+@media (min-width: 768px) {
+  div.col-sm-7.five-three {
+    width: 60% !important;
+  }
+
+  div.col-sm-5.five-two {
+    width: 40% !important;
+  }
+}
+
+.tblDisableScroll {
+  overflow-x: hidden !important;
+}
+
+.my-drop-zone {
+  border: dotted 3px lightgray;
+  width: 90%;
+  height: 100px;
+  ;
+}
+
+.another-file-over-class {
+  border: dotted 3px green;
+}
+
+a,
+a label {
+  cursor: pointer;
+}
+
+.scrollit {
+  height: 200px;
+  overflow-y: scroll;
+}

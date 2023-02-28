@@ -1,0 +1,302 @@
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>
+      Import Data
+    </h1>
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="row">
+      <div class="col-md-12">
+        <div *ngIf="msg" role="alert" class="alert alert-info alert-dismissible">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+          <span class="sr-only">Error:</span> {{msg}}
+        </div>
+        <br/>
+        <div class="alert alert-info" role="alert" *ngIf="indLoading">
+          <img src="assets/images/loading.gif" width="32" height="32" /> Loading...</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <div class="form-group">
+          <label class="control-label">Upload Type</label>
+          <select class="form-control" name='SharingType' required [(ngModel)]="selectedUploadType" (change)="reset();">
+            <option *ngFor="let type of uploadTypes" value={{type}}>
+              {{type}}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group">
+              <label class="control-label"></label>
+              <input type="file" class="btn btn-primary" ng2FileSelect [uploader]="uploader" [disabled]="selectedUploadType == null || selectedUploadType == ''"
+              />
+            </div>
+            <div class="form-group" *ngIf="uploader.queue?.length>0">
+              <button type="button" class="btn btn-success btn-s" (click)="uploader.uploadAll()" [disabled]="!uploader.getNotUploadedItems().length || uploader.queue.length > 1">
+                <span class="glyphicon glyphicon-upload"></span> Upload
+              </button>
+              &nbsp;&nbsp;
+              <button type="button" class="btn btn-danger btn-s" (click)="uploader.clearQueue()" [disabled]="!uploader.queue.length">
+                <span class="glyphicon glyphicon-trash"></span> Remove
+              </button>
+            </div>
+          </div>
+          <div class="col-md-9">
+            <div class="box box-primary" *ngIf="uploader.queue?.length>0">
+              <div class="box-body table-responsive no-padding">
+                <table id="tblClients" class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Size</th>
+                      <th>Progress</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of uploader.queue">
+                      <td>
+                        <strong>{{ item?.file?.name }}</strong>
+                      </td>
+                      <td nowrap>{{ item?.file?.size/1024/1024 | number:'.2' }} MB</td>
+                      <td>
+                        <div class="progress" style="margin-bottom: 0;">
+                          <div class="progress-bar" role="progressbar" [ngStyle]="{ 'width': item.progress + '%' }"></div>
+                        </div>
+                      </td>
+                      <td class="text-center">
+                        <span *ngIf="item.isSuccess">
+                          <i class="glyphicon glyphicon-ok"></i>
+                        </span>
+                        <span *ngIf="item.isCancel">
+                          <i class="glyphicon glyphicon-ban-circle"></i>
+                        </span>
+                        <span *ngIf="item.isError">
+                          <i class="glyphicon glyphicon-remove"></i>
+                        </span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="selectedUploadType == 'Invoices'">
+      <div class="col-md-12">
+        <table *ngIf="_invoices.items?.length>0" style='width:100%;' border='0'>
+          <tr>
+            <td style='width:70px;'>
+              <label> Page Size</label>
+            </td>
+            <td class='pull-left' style='padding-top:20px;'>
+              <select class="form-control" name="pageSize" [(ngModel)]="_invoices.pageSize" style='width:75px;'>
+                <option [ngValue]="5">5</option>
+                <option [ngValue]="10">10</option>
+                <option [ngValue]="15">15</option>
+                <option [ngValue]="20">20</option>
+              </select>
+            </td>
+            <td>
+              <app-pagination [maxPageIndex]="_invoices.maxPageIndex" (pageNumberChanged)="_invoices.currentPageIndex = $event">
+              </app-pagination>
+            </td>
+          </tr>
+        </table>
+        <div class="box box-primary" *ngIf="_invoices.items?.length>0">
+          <div class="box-body table-responsive no-padding">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th> IRFID </th>
+                  <th> Invoice # </th>
+                  <th> Invoice date </th>
+                  <th> Invoice amount before TAX </th>
+                  <th> Invoice amount after TAX </th>
+                  <th> Invoice Narration </th>
+                  <th>Is Published</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let inv of _invoices.itemsOnCurrentPage;let idx = index;">
+                  <td> {{inv.IRFID}} </td>
+                  <td> {{inv.InvoiceNumber}} </td>
+                  <td> {{inv.InvoiceDate | amDateFormat: 'DD-MMM-YYYY'}} </td>
+                  <td> {{inv.InvoiceAmountBeforeTax}} </td>
+                  <td> {{inv.InvoiceAmountAfterTax}} </td>
+                  <td> {{inv.InvoiceNarration}} </td>
+                  <td>
+                    <span *ngIf="inv.IsPublished">
+                      <i class="glyphicon glyphicon-ok"></i>
+                    </span>
+                    <span *ngIf="!inv.IsPublished">
+                      <i class="glyphicon glyphicon-remove"></i>
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="selectedUploadType == 'CollectionAndOutstanding'">
+      <div class="col-md-12">
+        <table *ngIf="_collections.items?.length>0" style='width:100%;' border='0'>
+          <tr>
+            <td style='width:70px;'>
+              <label> Page Size</label>
+            </td>
+            <td class='pull-left' style='padding-top:20px;'>
+              <select class="form-control" name="pageSize" [(ngModel)]="_collections.pageSize" style='width:75px;'>
+                <option [ngValue]="5">5</option>
+                <option [ngValue]="10">10</option>
+                <option [ngValue]="15">15</option>
+                <option [ngValue]="20">20</option>
+              </select>
+            </td>
+            <td>
+              <app-pagination [maxPageIndex]="_collections.maxPageIndex" (pageNumberChanged)="_collections.currentPageIndex = $event">
+              </app-pagination>
+            </td>
+          </tr>
+        </table>
+        <div class="box box-primary" *ngIf="_collections.items?.length>0">
+          <div class="box-body table-responsive no-padding">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th> Invoice # </th>
+                  <th> Invoice date </th>
+                  <th> Collection date </th>
+                  <th> Client </th>
+                  <th> Credit amount </th>
+                  <th> TDS </th>
+                  <th> Total collection </th>
+                  <th> Other deductions </th>
+                  <th> Outstanding amount </th>
+                  <th> Remarks </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let collection of _collections.itemsOnCurrentPage;let idx = index;">
+                  <td> {{collection.InvoiceNumber}} </td>
+                  <td> {{collection.InvoiceDate | amDateFormat: 'DD-MMM-YYYY'}} </td>
+                  <td> {{collection.CollectionDate | amDateFormat: 'DD-MMM-YYYY'}} </td>
+                  <td> {{collection.ClientName}} </td>
+                  <td> {{collection.CreditAmount}} </td>
+                  <td> {{collection.TDS}} </td>
+                  <td> {{collection.TotalCollection}} </td>
+                  <td> {{collection.OtherDeduction}} </td>
+                  <td> {{collection.OutstandingAmount}} </td>
+                  <td> {{collection.Remarks}} </td>
+                  <td>
+                    <span *ngIf="collection.IsPublished">
+                      <i class="glyphicon glyphicon-ok"></i>
+                    </span>
+                    <span *ngIf="!collection.IsPublished">
+                      <i class="glyphicon glyphicon-remove"></i>
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="selectedUploadType == 'CreditNote'">
+      <div class="col-md-12">
+        <table *ngIf="_creditNotes.items?.length>0" style='width:100%;' border='0'>
+          <tr>
+            <td style='width:70px;'>
+              <label> Page Size</label>
+            </td>
+            <td class='pull-left' style='padding-top:20px;'>
+              <select class="form-control" name="pageSize" [(ngModel)]="_creditNotes.pageSize" style='width:75px;'>
+                <option [ngValue]="5">5</option>
+                <option [ngValue]="10">10</option>
+                <option [ngValue]="15">15</option>
+                <option [ngValue]="20">20</option>
+              </select>
+            </td>
+            <td>
+              <app-pagination [maxPageIndex]="_creditNotes.maxPageIndex" (pageNumberChanged)="_creditNotes.currentPageIndex = $event">
+              </app-pagination>
+            </td>
+          </tr>
+        </table>
+        <div class="box box-primary" *ngIf="_creditNotes.items?.length>0">
+          <div class="box-body table-responsive no-padding">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th> Invoice # </th>
+                  <th> CreditNote # </th>
+                  <th> Credit Amount </th>
+                  <th> Outstanding Amount </th>
+                  <th> Remarks </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let creditNote of _creditNotes.itemsOnCurrentPage;let idx = index;">
+                  <td> {{creditNote.InvoiceNumber}} </td>
+                  <td> {{creditNote.CreditNoteNumber}} </td>
+                  <td> {{creditNote.CreditNoteAmount}} </td>
+                  <td> {{creditNote.OutstandingAmount}} </td>
+                  <td> {{creditNote.ProcessRemarks}} </td>
+                  <td>
+                    <span *ngIf="creditNote.IsPublished">
+                      <i class="glyphicon glyphicon-ok"></i>
+                    </span>
+                    <span *ngIf="!creditNote.IsPublished">
+                      <i class="glyphicon glyphicon-remove"></i>
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="_invoices.items?.length>0 || _collections.items?.length>0 || _creditNotes.items?.length>0">
+      <div class="col-md-12">
+        <button type="button" class="btn btn-success pull-right" (click)="openPublishConfirmation();" [disabled]="!ispublishenabled">Publish</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+
+<modal #publishmodal>
+  <modal-header [show-close]="true">
+    <h3 class="modal-title">Publish data</h3>
+  </modal-header>
+  <modal-body>
+    Do you want to publish the uploaded {{selectedUploadType}} data ?
+  </modal-body>
+  <modal-footer>
+    <div>
+      <a class="btn btn-default" (click)="publishmodal.dismiss()">Cancel</a>
+      <button type="button" (click)="publish();" class="btn btn-primary">Yes</button>
+    </div>
+  </modal-footer>
+
+</modal>

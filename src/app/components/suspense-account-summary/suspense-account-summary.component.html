@@ -1,0 +1,232 @@
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>
+      Suspense Accounts
+    </h1>
+    <ol class="breadcrumb">
+      <li class="active"> Home</li>
+    </ol>
+  </section>
+  <!-- Main content -->
+  <section class="content">
+    <div class="row">
+      <div class="col-md-12">
+        <div *ngIf="msg" role="alert" class="alert alert-info alert-dismissible">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+          <span class="sr-only">Error:</span> {{msg}}
+        </div>
+        <br/>
+        <div class="alert alert-info" role="alert" *ngIf="indLoading">
+          <img src="assets/images/loading.gif" width="32" height="32" /> Loading...</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="pull-left">
+          <a class="btn btn-primary" routerLink='/home/suspense-account'>Add New Suspense Account</a>
+        </div>
+      </div>
+    </div>
+    <br/>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="box box-warning">
+          <div class="box-header with-border">
+            <h3 class="box-title">Unadjusted & To be published</h3>
+          </div>
+          <div class="form-horizontal">
+            <div class="box-body">
+              <div class="box-body table-responsive no-padding">
+                <table *ngIf="suspenseAccountSummary.ToBePublished?.length>0" class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th> Credit Date</th>
+                      <th> Bank</th>
+                      <th> Amount credited </th>
+                      <th> Credit Details </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of suspenseAccountSummary.ToBePublished;let idx = index;">
+                      <td> {{ item.DateOfCredit | amDateFormat: 'DD-MM-YYYY'}} </td>
+                      <td> {{ item.BankName }} </td>
+                      <td> {{ item.AmountCredited }} </td>
+                      <td> {{ item.CreditDetails }} </td>
+                      <td>
+                        <li style="cursor:pointer" class="fa fa-pencil" aria-hidden="true" (click)="openSuspenseAccountDetails(item.Id,item.ClaimId);"></li> &nbsp;&nbsp;&nbsp;&nbsp;
+                        <li style="cursor:pointer" class="fa fa-trash-o" aria-hidden="true" (click)="openDeleteConfirmation(idx);"></li>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="pull-right" *ngIf="suspenseAccountSummary.ToBePublished?.length>0">
+                <button class="btn btn-success" (click)="openSubmitConfirm();">Publish</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <br/>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="box box-info">
+          <div class="box-header with-border">
+            <h3 class="box-title">Published and To be Claimed</h3>
+          </div>
+          <div class="form-horizontal">
+            <div class="box-body">
+              <div class="box-body table-responsive no-padding">
+                <table *ngIf="suspenseAccountSummary.Published?.length>0" class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th> Credit Date</th>
+                      <th> Bank</th>
+                      <th> Amount credited </th>
+                      <th> Credit Details </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of suspenseAccountSummary.Published;let idx = index;">
+                      <td> {{ item.DateOfCredit | amDateFormat: 'DD-MM-YYYY'}} </td>
+                      <td> {{ item.BankName }} </td>
+                      <td> {{ item.AmountCredited }} </td>
+                      <td> {{ item.CreditDetails }} </td>
+                      <td>
+                        <li style="cursor:pointer" class="fa fa-eye" aria-hidden="true" (click)="openSuspenseAccountDetails(item.Id,item.ClaimId);"></li> &nbsp;&nbsp;&nbsp;&nbsp;
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <br/>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="box box-info">
+          <div class="box-header with-border">
+            <h3 class="box-title">Claimed</h3>
+          </div>
+          <div class="form-horizontal">
+            <div class="box-body">
+              <div class="box-body table-responsive no-padding">
+                <table *ngIf="suspenseAccountSummary.Claimed?.length>0" class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th> Credit Date</th>
+                      <th> Bank</th>
+                      <th> Amount credited </th>
+                      <th> Credit Details </th>
+                      <th> Invoice # </th>
+                      <th> Invoice date </th>
+                      <th> Client </th>
+                      <th> Consultant </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of suspenseAccountSummary.Claimed;let idx = index;">
+                      <td> {{ item.DateOfCredit | amDateFormat: 'DD-MM-YYYY'}} </td>
+                      <td> {{ item.BankName }} </td>
+                      <td> {{ item.AmountCredited }} </td>
+                      <td> {{ item.CreditDetails }} </td>
+                      <td> {{ item.InvoiceNumber }} </td>
+                      <td> {{ item.InvoiceDate | amDateFormat: 'DD-MM-YYYY'}} </td>
+                      <td> {{ item.ClientName }} </td>
+                      <td> {{ item.ConsultantName }} </td>
+                      <td>
+                        <li style="cursor:pointer" class="fa fa-eye" aria-hidden="true" (click)="openSuspenseAccountDetails(item.Id,item.ClaimId);"></li> &nbsp;&nbsp;&nbsp;&nbsp;
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <br/>
+      </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+          <div class="box box-success">
+            <div class="box-header with-border">
+              <h3 class="box-title">Approved</h3>
+            </div>
+            <div class="form-horizontal">
+              <div class="box-body">
+                <div class="box-body table-responsive no-padding">
+                  <table *ngIf="suspenseAccountSummary.Approved?.length>0" class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th> Credit Date</th>
+                        <th> Bank</th>
+                        <th> Amount credited </th>
+                        <th> Credit Details </th>
+                        <th> Invoice # </th>
+                        <th> Invoice date </th>
+                        <th> Client </th>
+                        <th> Consultant </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of suspenseAccountSummary.Approved;let idx = index;">
+                        <td> {{ item.DateOfCredit | amDateFormat: 'DD-MM-YYYY'}} </td>
+                        <td> {{ item.BankName }} </td>
+                        <td> {{ item.AmountCredited }} </td>
+                        <td> {{ item.CreditDetails }} </td>
+                        <td> {{ item.InvoiceNumber }} </td>
+                        <td> {{ item.InvoiceDate | amDateFormat: 'DD-MM-YYYY'}} </td>
+                        <td> {{ item.ClientName }} </td>
+                        <td> {{ item.ConsultantName }} </td>
+                        <td>
+                          <li style="cursor:pointer" class="fa fa-eye" aria-hidden="true" (click)="openSuspenseAccountDetails(item.Id,item.ClaimId);"></li> &nbsp;&nbsp;&nbsp;&nbsp;
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br/>
+        </div>
+      </div>    
+  </section>
+</div>
+<modal #deleteCnfm>
+  <modal-header [show-close]="true">
+    <h3 class="modal-title">Delete Susense account</h3>
+  </modal-header>
+  <modal-body>
+    Do you want to delete the suspense account?
+  </modal-body>
+  <modal-footer>
+    <div>
+      <a class="btn btn-default" (click)="deleteCnfm.dismiss()">Cancel</a>
+      <button type="button" (click)="deleteSuspenseAccount();" class="btn btn-primary">Yes</button>
+    </div>
+  </modal-footer>
+</modal>
+<modal #supAccountubmitCnfm>
+  <modal-header [show-close]="true">
+    <h3 class="modal-title">Publish Suspense Account</h3>
+  </modal-header>
+  <modal-body>
+    Do you want to publish suspense accounts?
+  </modal-body>
+  <modal-footer>
+    <div>
+      <a class="btn btn-default" (click)="supAccountubmitCnfm.dismiss()">Cancel</a>
+      <button type="button" (click)="publishSuspenseAccount();" class="btn btn-primary">Yes</button>
+    </div>
+  </modal-footer>
+</modal>
